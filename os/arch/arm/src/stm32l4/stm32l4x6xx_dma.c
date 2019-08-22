@@ -728,14 +728,14 @@ void stm32l4_dmasample(DMA_HANDLE handle, struct stm32l4_dmaregs_s *regs)
   struct stm32l4_dma_s *dmach = (struct stm32l4_dma_s *)handle;
   irqstate_t flags;
 
-  flags       = enter_critical_section();
+  flags       = irqsave();
   regs->isr   = dmabase_getreg(dmach, STM32L4_DMA_ISR_OFFSET);
   regs->cselr = dmabase_getreg(dmach, STM32L4_DMA_CSELR_OFFSET);
   regs->ccr   = dmachan_getreg(dmach, STM32L4_DMACHAN_CCR_OFFSET);
   regs->cndtr = dmachan_getreg(dmach, STM32L4_DMACHAN_CNDTR_OFFSET);
   regs->cpar  = dmachan_getreg(dmach, STM32L4_DMACHAN_CPAR_OFFSET);
   regs->cmar  = dmachan_getreg(dmach, STM32L4_DMACHAN_CMAR_OFFSET);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 #endif
 

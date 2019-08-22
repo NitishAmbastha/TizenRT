@@ -833,11 +833,11 @@ static void stm32l4serial_restoreusartint(FAR struct stm32l4_serial_s *priv,
 {
   irqstate_t flags;
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   stm32l4serial_setusartint(priv, ie);
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -849,7 +849,7 @@ static void stm32l4serial_disableusartint(FAR struct stm32l4_serial_s *priv,
 {
   irqstate_t flags;
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   if (ie)
     {
@@ -889,7 +889,7 @@ static void stm32l4serial_disableusartint(FAR struct stm32l4_serial_s *priv,
 
   stm32l4serial_setusartint(priv, 0);
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -1161,7 +1161,7 @@ static void stm32l4serial_setsuspend(struct uart_dev_s *dev, bool suspend)
     {
       irqstate_t flags;
 
-      flags = enter_critical_section();
+      flags = irqsave();
 
       /* Perform initial Rx DMA buffer fetch to wake-up serial device
        * activity.
@@ -1172,7 +1172,7 @@ static void stm32l4serial_setsuspend(struct uart_dev_s *dev, bool suspend)
           stm32l4serial_dmarxcallback(priv->rxdma, 0, priv);
         }
 
-      leave_critical_section(flags);
+      irqrestore(flags);
     }
 #endif
 }
@@ -1794,7 +1794,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         uint32_t cr1_ue;
         irqstate_t flags;
 
-        flags = enter_critical_section();
+        flags = irqsave();
 
         /* Get the original state of UE */
 
@@ -1828,7 +1828,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         /* Re-enable UE if appropriate */
 
         stm32l4serial_putreg(priv, STM32L4_USART_CR1_OFFSET, cr1 | cr1_ue);
-        leave_critical_section(flags);
+        irqrestore(flags);
       }
      break;
 #endif
@@ -1840,7 +1840,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         uint32_t cr1_ue;
         irqstate_t flags;
 
-        flags = enter_critical_section();
+        flags = irqsave();
 
         /* Get the original state of UE */
 
@@ -1879,7 +1879,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         /* Re-enable UE if appropriate */
 
         stm32l4serial_putreg(priv, STM32L4_USART_CR1_OFFSET, cr1 | cr1_ue);
-        leave_critical_section(flags);
+        irqrestore(flags);
       }
      break;
 #endif
@@ -1891,7 +1891,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         uint32_t cr1_ue;
         irqstate_t flags;
 
-        flags = enter_critical_section();
+        flags = irqsave();
 
         /* Get the original state of UE */
 
@@ -1921,7 +1921,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         /* Re-enable UE if appropriate */
 
         stm32l4serial_putreg(priv, STM32L4_USART_CR1_OFFSET, cr1 | cr1_ue);
-        leave_critical_section(flags);
+        irqrestore(flags);
       }
      break;
 #endif
@@ -2028,7 +2028,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         irqstate_t flags;
         uint32_t tx_break;
 
-        flags = enter_critical_section();
+        flags = irqsave();
 
         /* Disable any further tx activity */
 
@@ -2041,7 +2041,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         tx_break = GPIO_OUTPUT | (~(GPIO_MODE_MASK|GPIO_OUTPUT_SET) & priv->tx_gpio);
         stm32l4_configgpio(tx_break);
 
-        leave_critical_section(flags);
+        irqrestore(flags);
       }
       break;
 
@@ -2049,7 +2049,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
       {
         irqstate_t flags;
 
-        flags = enter_critical_section();
+        flags = irqsave();
 
         /* Configure TX back to U(S)ART */
 
@@ -2061,7 +2061,7 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
 
         stm32l4serial_txint(dev, true);
 
-        leave_critical_section(flags);
+        irqrestore(flags);
       }
       break;
 #  else
@@ -2070,10 +2070,10 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         uint32_t cr1;
         irqstate_t flags;
 
-        flags = enter_critical_section();
+        flags = irqsave();
         cr1   = stm32l4serial_getreg(priv, STM32L4_USART_CR1_OFFSET);
         stm32l4serial_putreg(priv, STM32L4_USART_CR1_OFFSET, cr1 | USART_CR1_SBK);
-        leave_critical_section(flags);
+        irqrestore(flags);
       }
       break;
 
@@ -2082,10 +2082,10 @@ static int stm32l4serial_ioctl(FAR struct file *filep, int cmd,
         uint32_t cr1;
         irqstate_t flags;
 
-        flags = enter_critical_section();
+        flags = irqsave();
         cr1   = stm32l4serial_getreg(priv, STM32L4_USART_CR1_OFFSET);
         stm32l4serial_putreg(priv, STM32L4_USART_CR1_OFFSET, cr1 & ~USART_CR1_SBK);
-        leave_critical_section(flags);
+        irqrestore(flags);
       }
       break;
 #  endif
@@ -2161,7 +2161,7 @@ static void stm32l4serial_rxint(FAR struct uart_dev_s *dev, bool enable)
    * "           "      USART_ISR_ORE    Overrun Error Detected
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   ie = priv->ie;
   if (enable)
     {
@@ -2185,7 +2185,7 @@ static void stm32l4serial_rxint(FAR struct uart_dev_s *dev, bool enable)
   /* Then set the new interrupt state */
 
   stm32l4serial_restoreusartint(priv, ie);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 #endif
 
@@ -2560,7 +2560,7 @@ static void stm32l4serial_txint(FAR struct uart_dev_s *dev, bool enable)
    * USART_CR3_CTSIE    USART_ISR_CTS    CTS flag                     (not used)
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   if (enable)
     {
       /* Set to receive an interrupt when the TX data register is empty */
@@ -2602,7 +2602,7 @@ static void stm32l4serial_txint(FAR struct uart_dev_s *dev, bool enable)
       stm32l4serial_restoreusartint(priv, priv->ie & ~USART_CR1_TXEIE);
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -2974,7 +2974,7 @@ void stm32l4_serial_dma_poll(void)
 {
     irqstate_t flags;
 
-    flags = enter_critical_section();
+    flags = irqsave();
 
 #ifdef CONFIG_USART1_RXDMA
   if (g_usart1priv.rxdma != NULL)
@@ -3011,7 +3011,7 @@ void stm32l4_serial_dma_poll(void)
     }
 #endif
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 #endif
 

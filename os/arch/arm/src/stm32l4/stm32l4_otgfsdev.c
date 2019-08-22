@@ -4157,7 +4157,7 @@ static void stm32l4_epout_disable(FAR struct stm32l4_ep_s *privep)
    * Global OUT NAK mode in the core.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_enablegonak(privep);
 
   /* Disable the required OUT endpoint by setting the EPDIS and SNAK bits
@@ -4203,7 +4203,7 @@ static void stm32l4_epout_disable(FAR struct stm32l4_ep_s *privep)
 
   stm32l4_req_cancel(privep, -ESHUTDOWN);
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -4266,7 +4266,7 @@ static void stm32l4_epin_disable(FAR struct stm32l4_ep_s *privep)
    * the DIEPCTLx register.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   regaddr = STM32L4_OTGFS_DIEPCTL(privep->epphy);
   regval  = stm32l4_getreg(regaddr);
   regval &= ~OTGFS_DIEPCTL_USBAEP;
@@ -4297,7 +4297,7 @@ static void stm32l4_epin_disable(FAR struct stm32l4_ep_s *privep)
   /* Cancel any queued write requests */
 
   stm32l4_req_cancel(privep, -ESHUTDOWN);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -4485,7 +4485,7 @@ static int stm32l4_ep_submit(FAR struct usbdev_ep_s *ep,
 
   /* Disable Interrupts */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* If we are stalled, then drop all requests on the floor */
 
@@ -4530,7 +4530,7 @@ static int stm32l4_ep_submit(FAR struct usbdev_ep_s *ep,
         }
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return ret;
 }
 
@@ -4558,7 +4558,7 @@ static int stm32l4_ep_cancel(FAR struct usbdev_ep_s *ep,
 
   usbtrace(TRACE_EPCANCEL, privep->epphy);
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* FIXME: if the request is the first, then we need to flush the EP
    *         otherwise just remove it from the list
@@ -4567,7 +4567,7 @@ static int stm32l4_ep_cancel(FAR struct usbdev_ep_s *ep,
    */
 
   stm32l4_req_cancel(privep, -ESHUTDOWN);
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -4772,7 +4772,7 @@ static int stm32l4_ep_stall(FAR struct usbdev_ep_s *ep, bool resume)
 
   /* Set or clear the stall condition as requested */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   if (resume)
     {
       ret = stm32l4_ep_clrstall(privep);
@@ -4781,7 +4781,7 @@ static int stm32l4_ep_stall(FAR struct usbdev_ep_s *ep, bool resume)
     {
       ret = stm32l4_ep_setstall(privep);
     }
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   return ret;
 }
@@ -4840,7 +4840,7 @@ static FAR struct usbdev_ep_s *stm32l4_ep_alloc(FAR struct usbdev_s *dev,
 
   /* Get the set of available endpoints depending on the direction */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   epavail = priv->epavail[in];
 
   /* A physical address of 0 means that any endpoint will do */
@@ -4886,7 +4886,7 @@ static FAR struct usbdev_ep_s *stm32l4_ep_alloc(FAR struct usbdev_s *dev,
 
               /* And return the pointer to the standard endpoint structure */
 
-              leave_critical_section(flags);
+              irqrestore(flags);
               return in ? &priv->epin[epno].ep : &priv->epout[epno].ep;
             }
         }
@@ -4895,7 +4895,7 @@ static FAR struct usbdev_ep_s *stm32l4_ep_alloc(FAR struct usbdev_s *dev,
     }
 
   usbtrace(TRACE_DEVERROR(STM32L4_TRACEERR_NOEP), (uint16_t)eplog);
-  leave_critical_section(flags);
+  irqrestore(flags);
   return NULL;
 }
 
@@ -4920,9 +4920,9 @@ static void stm32l4_ep_free(FAR struct usbdev_s *dev,
     {
       /* Mark the endpoint as available */
 
-      flags = enter_critical_section();
+      flags = irqsave();
       priv->epavail[privep->isin] |= (1 << privep->epphy);
-      leave_critical_section(flags);
+      irqrestore(flags);
     }
 }
 
@@ -4964,7 +4964,7 @@ static int stm32l4_wakeup(struct usbdev_s *dev)
 
   /* Is wakeup enabled? */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   if (priv->wakeup)
     {
       /* Yes... is the core suspended? */
@@ -4990,7 +4990,7 @@ static int stm32l4_wakeup(struct usbdev_s *dev)
         }
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -5034,7 +5034,7 @@ static int stm32l4_pullup(struct usbdev_s *dev, bool enable)
 
   usbtrace(TRACE_DEVPULLUP, (uint16_t)enable);
 
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = irqsave();
   regval = stm32l4_getreg(STM32L4_OTGFS_DCTL);
   if (enable)
     {
@@ -5054,7 +5054,7 @@ static int stm32l4_pullup(struct usbdev_s *dev, bool enable)
     }
 
   stm32l4_putreg(regval, STM32L4_OTGFS_DCTL);
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -5643,7 +5643,7 @@ void up_usbuninitialize(void)
 
   /* Disconnect device */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_pullup(&priv->usbdev, false);
   priv->usbdev.speed = USB_SPEED_UNKNOWN;
 
@@ -5674,7 +5674,7 @@ void up_usbuninitialize(void)
   /* TODO: Turn off USB power and clocking */
 
   priv->devstate = DEVSTATE_DEFAULT;
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -5782,9 +5782,9 @@ int usbdev_unregister(struct usbdevclass_driver_s *driver)
    * canceled while the class driver is still bound.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_usbreset(priv);
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   /* Unbind the class driver */
 
@@ -5792,7 +5792,7 @@ int usbdev_unregister(struct usbdevclass_driver_s *driver)
 
   /* Disable USB controller interrupts */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   up_disable_irq(STM32L4_IRQ_OTGFS);
 
   /* Disconnect device */
@@ -5802,7 +5802,7 @@ int usbdev_unregister(struct usbdevclass_driver_s *driver)
   /* Unhook the driver */
 
   priv->driver = NULL;
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   return OK;
 }

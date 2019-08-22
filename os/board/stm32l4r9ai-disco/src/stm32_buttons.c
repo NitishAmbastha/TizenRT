@@ -257,7 +257,7 @@ void board_button_initialize(void)
  * Name: board_buttons
  ****************************************************************************/
 
-uint32_t board_buttons(void)
+uint8_t board_buttons(void)
 {
   uint32_t ret = 0;
   int i;

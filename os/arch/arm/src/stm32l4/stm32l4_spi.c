@@ -1780,7 +1780,7 @@ FAR struct spi_dev_s *stm32l4_spibus_initialize(int bus)
 {
   FAR struct stm32l4_spidev_s *priv = NULL;
 
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = irqsave();
 
 #ifdef CONFIG_STM32L4_SPI1
   if (bus == 1)
@@ -1862,7 +1862,7 @@ FAR struct spi_dev_s *stm32l4_spibus_initialize(int bus)
       return NULL;
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return (FAR struct spi_dev_s *)priv;
 }
 

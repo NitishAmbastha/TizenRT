@@ -145,7 +145,7 @@ int stm32l4_exti_comp(int cmp, bool risingedge, bool fallingedge,
   * installed correctly before the next interrupt is received.
   */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Install external interrupt handlers */
 
@@ -176,6 +176,6 @@ int stm32l4_exti_comp(int cmp, bool risingedge, bool fallingedge,
 
   /* Leave the critical section */
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }

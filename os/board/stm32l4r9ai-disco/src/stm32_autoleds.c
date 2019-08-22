@@ -58,10 +58,10 @@
  ****************************************************************************/
 
 /****************************************************************************
- * Name: board_autoled_initialize
+ * Name: board_led_initialize
  ****************************************************************************/
 
-void board_autoled_initialize(void)
+void board_led_initialize(void)
 {
   /* Configure LD4,5 GPIO for output */
 
@@ -70,10 +70,10 @@ void board_autoled_initialize(void)
 }
 
 /****************************************************************************
- * Name: board_autoled_on
+ * Name: board_led_on
  ****************************************************************************/
 
-void board_autoled_on(int led)
+void board_led_on(int led)
 {
   switch (led)
     {
@@ -126,10 +126,10 @@ void board_autoled_on(int led)
 }
 
 /****************************************************************************
- * Name: board_autoled_off
+ * Name: board_led_off
  ****************************************************************************/
 
-void board_autoled_off(int led)
+void board_led_off(int led)
 {
   switch (led)
     {

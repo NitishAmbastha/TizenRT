@@ -194,7 +194,7 @@ int stm32l4_configgpio(uint32_t cfgset)
    * exclusive access to all of the GPIO configuration registers.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Now apply the configuration to the mode register */
 
@@ -334,7 +334,7 @@ int stm32l4_configgpio(uint32_t cfgset)
       putreg32(regval, regaddr);
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 

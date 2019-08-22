@@ -117,7 +117,7 @@ int stm32l4_dumpgpio(uint32_t pinset, const char *msg)
 
   /* The following requires exclusive access to the GPIO registers */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   DEBUGASSERT(port < STM32L4_NPORTS);
 
@@ -146,7 +146,7 @@ int stm32l4_dumpgpio(uint32_t pinset, const char *msg)
             g_portchar[port], getreg32(STM32L4_RCC_AHB1ENR));
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 

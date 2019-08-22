@@ -59,8 +59,8 @@
  */
 
 #if defined(CONFIG_ARCH_LEDS) && defined(LED_IDLE)
-#  define BEGIN_IDLE() board_autoled_on(LED_IDLE)
-#  define END_IDLE()   board_autoled_off(LED_IDLE)
+#  define BEGIN_IDLE() board_led_on(LED_IDLE)
+#  define END_IDLE()   board_led_off(LED_IDLE)
 #else
 #  define BEGIN_IDLE()
 #  define END_IDLE()
@@ -96,7 +96,7 @@ static void up_idlepm(void)
 
   if (newstate != oldstate)
     {
-      flags = enter_critical_section();
+      flags = irqsave();
 
       /* Perform board-specific, state-dependent logic here */
 
@@ -140,7 +140,7 @@ static void up_idlepm(void)
           break;
         }
 
-      leave_critical_section(flags);
+      irqrestore(flags);
     }
 }
 #else

@@ -194,7 +194,7 @@ int stm32l4_freerun_counter(FAR struct stm32l4_freerun_s *freerun,
    * be lost.
    */
 
-  flags    = enter_critical_section();
+  flags    = irqsave();
 
   overflow = freerun->overflow;
   counter  = STM32L4_TIM_GETCOUNTER(freerun->tch);
@@ -221,7 +221,7 @@ int stm32l4_freerun_counter(FAR struct stm32l4_freerun_s *freerun,
       freerun->overflow = overflow;
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   tmrinfo("counter=%lu (%lu) overflow=%lu, pending=%i\n",
          (unsigned long)counter,  (unsigned long)verify,

@@ -1125,7 +1125,7 @@ static void adc_rccreset(FAR struct stm32_dev_s *priv, bool reset)
    * several different drivers.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Set or clear the selected bit in the AHB2 reset register */
 
@@ -1140,7 +1140,7 @@ static void adc_rccreset(FAR struct stm32_dev_s *priv, bool reset)
     }
 
   putreg32(regval, STM32L4_RCC_AHB2RSTR);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -1278,7 +1278,7 @@ static int adc_setup(FAR struct adc_dev_s *dev)
       return ret;
     }
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Make sure that the ADC device is in the powered up, reset state. */
 
@@ -1396,7 +1396,7 @@ static int adc_setup(FAR struct adc_dev_s *dev)
     }
 #endif
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   ainfo("ISR:   0x%08x CR:    0x%08x CFGR:  0x%08x CFGR2: 0x%08x\n",
         adc_getreg(priv, STM32L4_ADC_ISR_OFFSET),

@@ -231,7 +231,7 @@ static inline void stm32l4_fpuconfig(void)
  ****************************************************************************/
 
 #ifdef CONFIG_STACK_COLORATION
-static void go_nx_start(void *pv, unsigned int nbytes)
+static void go_os_start(void *pv, unsigned int nbytes)
 {
   /* Set the IDLE stack to the stack coloration value then jump to
    * nx_start().  We take extreme care here because were currently
@@ -356,7 +356,7 @@ void __start(void)
 
   /* Initialize onboard resources */
 
-  stm32l4_board_initialize();
+  board_initialize();
   showprogress('F');
 
   /* Then start NuttX */
@@ -367,11 +367,11 @@ void __start(void)
 #ifdef CONFIG_STACK_COLORATION
   /* Set the IDLE stack to the coloration value and jump into nx_start() */
 
-  go_nx_start((FAR void *)&_ebss, CONFIG_IDLETHREAD_STACKSIZE);
+  go_os_start((FAR void *)&_ebss, CONFIG_IDLETHREAD_STACKSIZE);
 #else
-  /* Call nx_start() */
+  /* Call os_start() */
 
-  nx_start();
+  os_start();
 
   /* Shoulnd't get here */
 

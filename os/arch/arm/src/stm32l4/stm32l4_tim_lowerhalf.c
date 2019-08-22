@@ -464,7 +464,7 @@ static void stm32l4_setcallback(FAR struct timer_lowerhalf_s *lower,
                                 tccb_t callback, FAR void *arg)
 {
   FAR struct stm32l4_lowerhalf_s *priv = (FAR struct stm32l4_lowerhalf_s *)lower;
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = irqsave();
 
   /* Save the new callback */
 
@@ -482,7 +482,7 @@ static void stm32l4_setcallback(FAR struct timer_lowerhalf_s *lower,
       STM32L4_TIM_SETISR(priv->tim, NULL, NULL, 0);
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************

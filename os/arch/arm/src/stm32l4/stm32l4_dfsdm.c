@@ -1049,7 +1049,7 @@ static void dfsdm_rccreset(FAR struct stm32_dev_s *priv, bool reset)
    * several different drivers.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Set or clear the selected bit in the APB2 reset register */
 
@@ -1064,7 +1064,7 @@ static void dfsdm_rccreset(FAR struct stm32_dev_s *priv, bool reset)
     }
 
   putreg32(regval, STM32L4_RCC_APB2RSTR);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -1159,7 +1159,7 @@ static int dfsdm_setup(FAR struct adc_dev_s *dev)
       return ret;
     }
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Make sure that the device is in the powered up, reset state. */
 
@@ -1242,7 +1242,7 @@ static int dfsdm_setup(FAR struct adc_dev_s *dev)
     }
 #endif
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   ainfo("ISR:   0x%08x FCR:    0x%08x CR1:  0x%08x CR2: 0x%08x\n",
         dfsdm_getreg(priv, FLTISR_OFFSET(priv)),

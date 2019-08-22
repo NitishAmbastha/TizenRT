@@ -1010,7 +1010,7 @@ static void stm32l4_chan_halt(FAR struct stm32l4_usbhost_s *priv, int chidx,
 static int stm32l4_chan_waitsetup(FAR struct stm32l4_usbhost_s *priv,
                                   FAR struct stm32l4_chan_s *chan)
 {
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = irqsave();
   int        ret   = -ENODEV;
 
   /* Is the device still connected? */
@@ -1029,7 +1029,7 @@ static int stm32l4_chan_waitsetup(FAR struct stm32l4_usbhost_s *priv,
       ret            = OK;
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return ret;
 }
 
@@ -1052,7 +1052,7 @@ static int stm32l4_chan_asynchsetup(FAR struct stm32l4_usbhost_s *priv,
                                     FAR struct stm32l4_chan_s *chan,
                                     usbhost_asynch_t callback, FAR void *arg)
 {
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = irqsave();
   int        ret   = -ENODEV;
 
   /* Is the device still connected? */
@@ -1069,7 +1069,7 @@ static int stm32l4_chan_asynchsetup(FAR struct stm32l4_usbhost_s *priv,
       ret            = OK;
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return ret;
 }
 #endif
@@ -1097,7 +1097,7 @@ static int stm32l4_chan_wait(FAR struct stm32l4_usbhost_s *priv,
    * while we wait.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Loop, testing for an end of transfer condition.  The channel 'result'
    * was set to EBUSY and 'waiter' was set to true before the transfer; 'waiter'
@@ -1125,7 +1125,7 @@ static int stm32l4_chan_wait(FAR struct stm32l4_usbhost_s *priv,
   /* The transfer is complete re-enable interrupts and return the result */
 
   ret = -(int)chan->result;
-  leave_critical_section(flags);
+  irqrestore(flags);
   return ret;
 }
 
@@ -3784,7 +3784,7 @@ static void stm32l4_txfe_enable(FAR struct stm32l4_usbhost_s *priv, int chidx)
    * (it would be sufficent just to disable the GINT interrupt).
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Should we enable the periodic or non-peridic Tx FIFO empty interrupts */
 
@@ -3806,7 +3806,7 @@ static void stm32l4_txfe_enable(FAR struct stm32l4_usbhost_s *priv, int chidx)
   /* Enable interrupts */
 
   stm32l4_putreg(STM32L4_OTGFS_GINTMSK, regval);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -3847,7 +3847,7 @@ static int stm32l4_wait(FAR struct usbhost_connection_s *conn,
 
   /* Loop until a change in connection state is detected */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   for (; ; )
     {
       /* Is there a change in the connection state of the single root hub
@@ -3866,7 +3866,7 @@ static int stm32l4_wait(FAR struct usbhost_connection_s *conn,
           /* And return the root hub port */
 
           *hport = connport;
-          leave_critical_section(flags);
+          irqrestore(flags);
 
           uvdbg("RHport Connected: %s\n", connport->connected ? "YES" : "NO");
           return OK;
@@ -3883,7 +3883,7 @@ static int stm32l4_wait(FAR struct usbhost_connection_s *conn,
           priv->hport = NULL;
 
           *hport = connport;
-          leave_critical_section(flags);
+          irqrestore(flags);
 
           uvdbg("Hub port Connected: %s\n", connport->connected ? "YES" : "NO");
           return OK;
@@ -4751,7 +4751,7 @@ static int stm32l4_cancel(FAR struct usbhost_driver_s *drvr, usbhost_ep_t ep)
    * completion of the transfer being cancelled.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Halt the channel */
 
@@ -4799,7 +4799,7 @@ static int stm32l4_cancel(FAR struct usbhost_driver_s *drvr, usbhost_ep_t ep)
     }
 #endif
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -4841,7 +4841,7 @@ static int stm32l4_connect(FAR struct usbhost_driver_s *drvr,
 
   /* Report the connection event */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   priv->hport = hport;
   if (priv->pscwait)
     {
@@ -4849,7 +4849,7 @@ static int stm32l4_connect(FAR struct usbhost_driver_s *drvr,
       stm32l4_givesem(&priv->pscsem);
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 #endif

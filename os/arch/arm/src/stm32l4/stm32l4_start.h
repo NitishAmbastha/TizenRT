@@ -54,6 +54,6 @@
  *
  ************************************************************************************/
 
-void stm32l4_board_initialize(void);
+void board_initialize(void);
 
 #endif /* __ARCH_ARM_SRC_STM32L4_STM32L4_START_H */

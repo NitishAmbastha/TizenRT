@@ -283,7 +283,7 @@ int stm32l4_oneshot_start(FAR struct stm32l4_oneshot_s *oneshot,
 
   /* Was the oneshot already running? */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   if (oneshot->running)
     {
       /* Yes.. then cancel it */
@@ -336,7 +336,7 @@ int stm32l4_oneshot_start(FAR struct stm32l4_oneshot_s *oneshot,
    */
 
   oneshot->running = true;
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -377,7 +377,7 @@ int stm32l4_oneshot_cancel(FAR struct stm32l4_oneshot_s *oneshot,
 
   /* Was the timer running? */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   if (!oneshot->running)
     {
       /* No.. Just return zero timer remaining and successful cancellation.
@@ -387,7 +387,7 @@ int stm32l4_oneshot_cancel(FAR struct stm32l4_oneshot_s *oneshot,
 
       ts->tv_sec  = 0;
       ts->tv_nsec = 0;
-      leave_critical_section(flags);
+      irqrestore(flags);
       return OK;
     }
 
@@ -416,7 +416,7 @@ int stm32l4_oneshot_cancel(FAR struct stm32l4_oneshot_s *oneshot,
   oneshot->running = false;
   oneshot->handler = NULL;
   oneshot->arg     = NULL;
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   /* Did the caller provide us with a location to return the time
    * remaining?

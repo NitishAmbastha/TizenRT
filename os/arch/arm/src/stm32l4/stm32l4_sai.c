@@ -728,11 +728,11 @@ static void sai_worker(void *arg)
        * disabled.
        */
 
-      flags = enter_critical_section();
+      flags = irqsave();
 #ifdef CONFIG_STM32L4_SAI_DMA
       (void)sai_dma_setup(priv);
 #endif
-      leave_critical_section(flags);
+      irqrestore(flags);
     }
 
   /* Process each buffer in the done queue */
@@ -744,9 +744,9 @@ static void sai_worker(void *arg)
        * also modified from the interrupt level.
        */
 
-      flags = enter_critical_section();
+      flags = irqsave();
       bfcontainer = (struct sai_buffer_s *)sq_remfirst(&priv->done);
-      leave_critical_section(flags);
+      irqrestore(flags);
 
       /* Perform the transfer done callback */
 
@@ -1020,7 +1020,7 @@ static int sai_receive(struct i2s_dev_s *dev, struct ap_buffer_s *apb,
 
   /* Add the buffer container to the end of the pending queue */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   sq_addlast((sq_entry_t *)bfcontainer, &priv->pend);
 
   /* Then start the next transfer.  If there is already a transfer in progess,
@@ -1031,7 +1031,7 @@ static int sai_receive(struct i2s_dev_s *dev, struct ap_buffer_s *apb,
   ret = sai_dma_setup(priv);
 #endif
   DEBUGASSERT(ret == OK);
-  leave_critical_section(flags);
+  irqrestore(flags);
   sai_exclsem_give(priv);
   return OK;
 
@@ -1120,7 +1120,7 @@ static int sai_send(struct i2s_dev_s *dev, struct ap_buffer_s *apb,
 
   /* Add the buffer container to the end of the pending queue */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   sq_addlast((sq_entry_t *)bfcontainer, &priv->pend);
 
   /* Then start the next transfer.  If there is already a transfer in progess,
@@ -1131,7 +1131,7 @@ static int sai_send(struct i2s_dev_s *dev, struct ap_buffer_s *apb,
   ret = sai_dma_setup(priv);
 #endif
   DEBUGASSERT(ret == OK);
-  leave_critical_section(flags);
+  irqrestore(flags);
   sai_exclsem_give(priv);
   return OK;
 
@@ -1205,14 +1205,14 @@ static struct sai_buffer_s *sai_buf_allocate(struct stm32l4_sai_s *priv)
 
   /* Get the buffer from the head of the free list */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   bfcontainer = priv->freelist;
   DEBUGASSERT(bfcontainer);
 
   /* Unlink the buffer from the freelist */
 
   priv->freelist = bfcontainer->flink;
-  leave_critical_section(flags);
+  irqrestore(flags);
   return bfcontainer;
 }
 
@@ -1240,10 +1240,10 @@ static void sai_buf_free(struct stm32l4_sai_s *priv, struct sai_buffer_s *bfcont
 
   /* Put the buffer container back on the free list */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   bfcontainer->flink  = priv->freelist;
   priv->freelist = bfcontainer;
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   /* Wake up any threads waiting for a buffer container */
 
@@ -1366,7 +1366,7 @@ struct i2s_dev_s *stm32l4_sai_initialize(int intf)
   struct stm32l4_sai_s *priv;
   irqstate_t flags;
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   switch (intf)
     {
@@ -1438,12 +1438,12 @@ struct i2s_dev_s *stm32l4_sai_initialize(int intf)
     }
 
   sai_portinitialize(priv);
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   return &priv->dev;
 
 err:
-  leave_critical_section(flags);
+  irqrestore(flags);
   return NULL;
 }
 

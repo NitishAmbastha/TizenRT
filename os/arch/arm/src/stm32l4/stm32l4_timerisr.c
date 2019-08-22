@@ -98,12 +98,12 @@
  *
  ****************************************************************************/
 
-static int stm32l4_timerisr(int irq, uint32_t *regs, void *arg)
+int up_timerisr(int irq, uint32_t *regs)
 {
-  /* Process timer interrupt */
+	/* Process timer interrupt */
 
-  nxsched_process_timer();
-  return 0;
+	sched_process_timer();
+	return 0;
 }
 
 /****************************************************************************
@@ -119,7 +119,7 @@ static int stm32l4_timerisr(int irq, uint32_t *regs, void *arg)
  *
  ****************************************************************************/
 
-void arm_timer_initialize(void)
+void up_timer_initialize(void)
 {
   uint32_t regval;
 
@@ -148,7 +148,7 @@ void arm_timer_initialize(void)
 
   /* Attach the timer interrupt vector */
 
-  (void)irq_attach(STM32L4_IRQ_SYSTICK, (xcpt_t)stm32l4_timerisr, NULL);
+  (void)irq_attach(STM32L4_IRQ_SYSTICK, (xcpt_t)up_timerisr, NULL);
 
   /* Enable SysTick interrupts */
 

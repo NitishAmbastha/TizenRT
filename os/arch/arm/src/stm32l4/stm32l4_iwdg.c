@@ -257,7 +257,7 @@ static inline void stm32l4_setprescaler(FAR struct stm32l4_lowerhalf_s *priv)
 {
   irqstate_t flags;
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Enable write access to IWDG_PR and IWDG_RLR registers */
 
@@ -299,7 +299,7 @@ static inline void stm32l4_setprescaler(FAR struct stm32l4_lowerhalf_s *priv)
       while ((stm32l4_getreg(STM32L4_IWDG_SR) & (IWDG_SR_PVU | IWDG_SR_RVU)) != 0);
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -340,11 +340,11 @@ static int stm32l4_start(FAR struct watchdog_lowerhalf_s *lower)
        * bits, the watchdog is automatically enabled at power-on.
        */
 
-      flags           = enter_critical_section();
+      flags           = irqsave();
       stm32l4_putreg(IWDG_KR_KEY_START, STM32L4_IWDG_KR);
       priv->lastreset = clock_systimer();
       priv->started   = true;
-      leave_critical_section(flags);
+      irqrestore(flags);
     }
 
   return OK;
@@ -399,10 +399,10 @@ static int stm32l4_keepalive(FAR struct watchdog_lowerhalf_s *lower)
 
   /* Reload the IWDG timer */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_putreg(IWDG_KR_KEY_RELOAD, STM32L4_IWDG_KR);
   priv->lastreset = clock_systimer();
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   return OK;
 }

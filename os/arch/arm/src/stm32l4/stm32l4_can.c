@@ -560,7 +560,7 @@ static void stm32l4can_reset(FAR struct can_dev_s *dev)
    * and to prevent any concurrent access to the AHB1RSTR1 register.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   /* Reset the CAN */
 
@@ -570,7 +570,7 @@ static void stm32l4can_reset(FAR struct can_dev_s *dev)
 
   regval &= ~regbit;
   putreg32(regval, STM32L4_RCC_APB1RSTR1);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************

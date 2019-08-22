@@ -292,7 +292,7 @@ extern "C"
  *
  ************************************************************************************/
 
-void stm32l4_board_initialize(void);
+void board_initialize(void);
 
 #undef EXTERN
 #if defined(__cplusplus)

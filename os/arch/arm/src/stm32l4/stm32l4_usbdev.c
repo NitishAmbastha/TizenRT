@@ -1225,9 +1225,9 @@ static void stm32l4_reqcomplete(struct stm32l4_ep_s *privep, int16_t result)
 
   /* Remove the completed request at the head of the endpoint request list */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   privreq = stm32l4_rqdequeue(privep);
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   if (privreq)
     {
@@ -2668,7 +2668,7 @@ stm32l4_epreserve(struct stm32l4_usbdev_s *priv, uint8_t epset)
   irqstate_t flags;
   int epndx = 0;
 
-  flags = enter_critical_section();
+  flags = irqsave();
   epset &= priv->epavail;
   if (epset)
     {
@@ -2693,7 +2693,7 @@ stm32l4_epreserve(struct stm32l4_usbdev_s *priv, uint8_t epset)
         }
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return privep;
 }
 
@@ -2704,9 +2704,9 @@ stm32l4_epreserve(struct stm32l4_usbdev_s *priv, uint8_t epset)
 static inline void
 stm32l4_epunreserve(struct stm32l4_usbdev_s *priv, struct stm32l4_ep_s *privep)
 {
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = irqsave();
   priv->epavail   |= STM32L4_ENDP_BIT(USB_EPNO(privep->ep.eplog));
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -2729,7 +2729,7 @@ static int stm32l4_epallocpma(struct stm32l4_usbdev_s *priv)
   int bufno = ERROR;
   int bufndx;
 
-  flags = enter_critical_section();
+  flags = irqsave();
   for (bufndx = 2; bufndx < STM32L4_NBUFFERS; bufndx++)
     {
       /* Check if this buffer is available */
@@ -2748,7 +2748,7 @@ static int stm32l4_epallocpma(struct stm32l4_usbdev_s *priv)
         }
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return bufno;
 }
 
@@ -2759,9 +2759,9 @@ static int stm32l4_epallocpma(struct stm32l4_usbdev_s *priv)
 static inline void
 stm32l4_epfreepma(struct stm32l4_usbdev_s *priv, struct stm32l4_ep_s *privep)
 {
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = irqsave();
   priv->epavail   |= STM32L4_ENDP_BIT(privep->bufno);
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -2891,7 +2891,7 @@ static int stm32l4_epdisable(struct usbdev_ep_s *ep)
 
   /* Cancel any ongoing activity */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_cancelrequests(privep);
 
   /* Disable TX; disable RX */
@@ -2900,7 +2900,7 @@ static int stm32l4_epdisable(struct usbdev_ep_s *ep)
   stm32l4_seteprxstatus(epno, USB_EPR_STATRX_DIS);
   stm32l4_seteptxstatus(epno, USB_EPR_STATTX_DIS);
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -2993,7 +2993,7 @@ static int stm32l4_epsubmit(struct usbdev_ep_s *ep, struct usbdev_req_s *req)
   epno        = USB_EPNO(ep->eplog);
   req->result = -EINPROGRESS;
   req->xfrd   = 0;
-  flags       = enter_critical_section();
+  flags       = irqsave();
 
   /* If we are stalled, then drop all requests on the floor */
 
@@ -3066,7 +3066,7 @@ static int stm32l4_epsubmit(struct usbdev_ep_s *ep, struct usbdev_req_s *req)
         }
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return ret;
 }
 
@@ -3088,9 +3088,9 @@ static int stm32l4_epcancel(struct usbdev_ep_s *ep, struct usbdev_req_s *req)
 #endif
   usbtrace(TRACE_EPCANCEL, USB_EPNO(ep->eplog));
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_cancelrequests(privep);
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -3120,7 +3120,7 @@ static int stm32l4_epstall(struct usbdev_ep_s *ep, bool resume)
 
   /* STALL or RESUME the endpoint */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   usbtrace(resume ? TRACE_EPRESUME : TRACE_EPSTALL, USB_EPNO(ep->eplog));
 
   /* Get status of the endpoint; stall the request if the endpoint is
@@ -3228,7 +3228,7 @@ static int stm32l4_epstall(struct usbdev_ep_s *ep, bool resume)
         }
     }
 
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -3390,7 +3390,7 @@ static int stm32l4_wakeup(struct usbdev_s *dev)
    * by the ESOF interrupt.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_initresume(priv);
   priv->rsmstate = RSMSTATE_STARTED;
 
@@ -3402,7 +3402,7 @@ static int stm32l4_wakeup(struct usbdev_s *dev)
 
   stm32l4_setimask(priv, USB_CNTR_ESOFM, USB_CNTR_WKUPM | USB_CNTR_SUSPM);
   stm32l4_putreg(~USB_ISTR_ESOF, STM32L4_USB_ISTR);
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -3439,7 +3439,7 @@ static int stm32l4_pullup(struct usbdev_s *dev, bool enable)
 
   usbtrace(TRACE_DEVPULLUP, (uint16_t)enable);
 
-  flags = enter_critical_section();
+  flags = irqsave();
   regval = stm32l4_getreg(STM32L4_USB_BCDR);
   if (enable)
     {
@@ -3459,7 +3459,7 @@ static int stm32l4_pullup(struct usbdev_s *dev, bool enable)
     }
 
   stm32l4_putreg(regval, STM32L4_USB_BCDR);
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 
@@ -3733,7 +3733,7 @@ void up_usbuninitialize(void)
   struct stm32l4_usbdev_s *priv = &g_usbdev;
   irqstate_t flags;
 
-  flags = enter_critical_section();
+  flags = irqsave();
   usbtrace(TRACE_DEVUNINIT, 0);
 
   /* Disable and detach the USB IRQ */
@@ -3755,7 +3755,7 @@ void up_usbuninitialize(void)
 
   stm32l4_pwr_enableusv(false);
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -3861,7 +3861,7 @@ int usbdev_unregister(struct usbdevclass_driver_s *driver)
    * canceled while the class driver is still bound.
    */
 
-  flags = enter_critical_section();
+  flags = irqsave();
   stm32l4_reset(priv);
 
   /* Unbind the class driver */
@@ -3883,7 +3883,7 @@ int usbdev_unregister(struct usbdevclass_driver_s *driver)
   /* Unhook the driver */
 
   priv->driver = NULL;
-  leave_critical_section(flags);
+  irqrestore(flags);
   return OK;
 }
 

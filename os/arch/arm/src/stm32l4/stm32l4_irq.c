@@ -81,9 +81,8 @@
  * processing.  Access to g_current_regs[] must be through the macro
  * CURRENT_REGS for portability.
  */
+volatile uint32_t *current_regs;
 
-volatile uint32_t *g_current_regs[1];
-#define CURRENT_REGS (g_current_regs[0])
 
 /* This is the address of the  exception vector table (determined by the
  * linker script).
@@ -108,7 +107,7 @@ static void stm32l4_dumpnvic(const char *msg, int irq)
 {
   irqstate_t flags;
 
-  flags = enter_critical_section();
+  flags = irqsave();
 
   irqinfo("NVIC (%s, irq=%d):\n", msg, irq);
   irqinfo("  INTCTRL:    %08x VECTAB:  %08x\n",
@@ -139,7 +138,7 @@ static void stm32l4_dumpnvic(const char *msg, int irq)
   irqinfo("              %08x\n",
           getreg32(NVIC_IRQ64_67_PRIORITY));
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 #else
 #  define stm32l4_dumpnvic(msg, irq)
@@ -350,7 +349,7 @@ void up_irqinitialize(void)
 
   /* currents_regs is non-NULL only while processing an interrupt */
 
-  CURRENT_REGS = NULL;
+  current_regs = NULL;
 
   /* Attach the SVCall and Hard Fault exception handlers.  The SVCall
    * exception is used for performing context switches; The Hard Fault
@@ -399,7 +398,7 @@ void up_irqinitialize(void)
 
   /* And finally, enable interrupts */
 
-  up_irq_enable();
+  irqenable();
 #endif
 }
 

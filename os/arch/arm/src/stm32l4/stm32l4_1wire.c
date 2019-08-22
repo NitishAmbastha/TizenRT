@@ -744,10 +744,10 @@ static int stm32_1wire_process(struct stm32_1wire_priv_s *priv,
 
           /* Atomic */
 
-          irqs = enter_critical_section();
+          irqs = irqsave();
           priv->msgs = &msgs[indx];
           stm32_1wire_send(priv, RESET_TX);
-          leave_critical_section(irqs);
+          irqrestore(irqs);
 
           /* Wait.  Break on timeout if TX line closed to GND */
 
@@ -765,12 +765,12 @@ static int stm32_1wire_process(struct stm32_1wire_priv_s *priv,
 
           /* Atomic */
 
-          irqs = enter_critical_section();
+          irqs = irqsave();
           priv->msgs = &msgs[indx];
           priv->byte = priv->msgs->buffer;
           priv->bit = 0;
           stm32_1wire_send(priv, (*priv->byte & (1 << priv->bit)) ? WRITE_TX1 : WRITE_TX0);
-          leave_critical_section(irqs);
+          irqrestore(irqs);
 
           /* Wait.  Break on timeout if TX line closed to GND */
 
@@ -788,12 +788,12 @@ static int stm32_1wire_process(struct stm32_1wire_priv_s *priv,
 
           /* Atomic */
 
-          irqs = enter_critical_section();
+          irqs = irqsave();
           priv->msgs = &msgs[indx];
           priv->byte = priv->msgs->buffer;
           priv->bit = 0;
           stm32_1wire_send(priv, READ_TX);
-          leave_critical_section(irqs);
+          irqrestore(irqs);
 
           /* Wait.  Break on timeout if TX line closed to GND */
 
@@ -811,10 +811,10 @@ static int stm32_1wire_process(struct stm32_1wire_priv_s *priv,
 
   /* Atomic */
 
-  irqs = enter_critical_section();
+  irqs = irqsave();
   priv->msgs = NULL;
   ret = priv->result;
-  leave_critical_section(irqs);
+  irqrestore(irqs);
 
   /* Release the port for re-use by other clients */
 
@@ -1275,7 +1275,7 @@ FAR struct onewire_dev_s *stm32l4_1wireinitialize(int port)
    * power-up hardware and configure GPIOs.
    */
 
-  irqs = enter_critical_section();
+  irqs = irqsave();
 
   if (priv->refs++ == 0)
     {
@@ -1291,7 +1291,7 @@ FAR struct onewire_dev_s *stm32l4_1wireinitialize(int port)
 #endif
     }
 
-  leave_critical_section(irqs);
+  irqrestore(irqs);
   return (struct onewire_dev_s *)inst;
 }
 
@@ -1324,16 +1324,16 @@ int stm32l4_1wireuninitialize(FAR struct onewire_dev_s *dev)
       return ERROR;
     }
 
-  irqs = enter_critical_section();
+  irqs = irqsave();
 
   if (--priv->refs)
     {
-      leave_critical_section(irqs);
+      irqrestore(irqs);
       kmm_free(priv);
       return OK;
     }
 
-  leave_critical_section(irqs);
+  irqrestore(irqs);
 
 #ifdef CONFIG_PM
   /* Unregister power management callbacks */

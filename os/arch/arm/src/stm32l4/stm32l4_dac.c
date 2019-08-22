@@ -595,11 +595,11 @@ static void dac_reset(FAR struct dac_dev_s *dev)
    * functional.
    */
 
-  flags   = enter_critical_section();
+  flags   = irqsave();
 
 #warning "Missing logic"
 
-  leave_critical_section(flags);
+  irqrestore(flags);
 }
 
 /****************************************************************************
@@ -1122,7 +1122,7 @@ static void dac_blockinit(void)
 
   /* Put the entire DAC block in reset state */
 
-  flags   = enter_critical_section();
+  flags   = irqsave();
   regval  = getreg32(STM32L4_RCC_APB1RSTR1);
   regval |= RCC_APB1RSTR1_DAC1RST;
   putreg32(regval, STM32L4_RCC_APB1RSTR1);
@@ -1131,7 +1131,7 @@ static void dac_blockinit(void)
 
   regval &= ~RCC_APB1RSTR1_DAC1RST;
   putreg32(regval, STM32L4_RCC_APB1RSTR1);
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   /* Mark the DAC block as initialized */
 

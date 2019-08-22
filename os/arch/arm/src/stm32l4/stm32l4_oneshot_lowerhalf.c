@@ -222,12 +222,12 @@ static int stm32l4_start(FAR struct oneshot_lowerhalf_s *lower,
 
   /* Save the callback information and start the timer */
 
-  flags          = enter_critical_section();
+  flags          = irqsave();
   priv->callback = callback;
   priv->arg      = arg;
   ret            = stm32l4_oneshot_start(&priv->oneshot,
                                        stm32l4_oneshot_handler, priv, ts);
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   if (ret < 0)
     {
@@ -273,11 +273,11 @@ static int stm32l4_cancel(FAR struct oneshot_lowerhalf_s *lower,
 
   /* Cancel the timer */
 
-  flags          = enter_critical_section();
+  flags          = irqsave();
   ret            = stm32l4_oneshot_cancel(&priv->oneshot, ts);
   priv->callback = NULL;
   priv->arg      = NULL;
-  leave_critical_section(flags);
+  irqrestore(flags);
 
   if (ret < 0)
     {
