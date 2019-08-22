@@ -3,9 +3,9 @@
 # see kconfig-language at https://www.kernel.org/doc/Documentation/kbuild/kconfig-language.txt
 #
 
-if ARCH_BOARD_STM32L4R9A_DISCO
+if ARCH_BOARD_STM32L4R9AI_DISCO
 
-config STM32L4R9A_DISCO_FLASH
+config STM32L4R9AI_DISCO_FLASH
 	bool "MTD driver for external 8Mbyte SST25 FLASH on SPI4"
 	default n
 	select MTD
@@ -17,52 +17,52 @@ config STM32L4R9A_DISCO_FLASH
 	---help---
 		Configures an MTD device for use with the onboard flash
 
-config STM32L4R9A_DISCO_FLASH_MINOR
+config STM32L4R9AI_DISCO_FLASH_MINOR
 	int "Minor number for the FLASH /dev/smart entry"
 	default 0
-	depends on STM32L4R9A_DISCO_FLASH
+	depends on STM32L4R9AI_DISCO_FLASH
 	---help---
 		Sets the minor number for the FLASH MTD /dev entry
 
-config STM32L4R9A_DISCO_FLASH_PART
+config STM32L4R9AI_DISCO_FLASH_PART
 	bool "Enable partition support on FLASH"
 	default n
-	depends on STM32L4R9A_DISCO_FLASH
+	depends on STM32L4R9AI_DISCO_FLASH
 	---help---
 		Enables creation of partitions on the FLASH
 
-config STM32L4R9A_DISCO_FLASH_CONFIG_PART
+config STM32L4R9AI_DISCO_FLASH_CONFIG_PART
 	bool "Create application config data partition on FLASH"
 	default y
-	depends on STM32L4R9A_DISCO_FLASH_PART
+	depends on STM32L4R9AI_DISCO_FLASH_PART
 	depends on PLATFORM_CONFIGDATA
 	---help---
 		Enables creation of a /dev/config partition on the FLASH
 
-config STM32L4R9A_DISCO_FLASH_CONFIG_PART_NUMBER
+config STM32L4R9AI_DISCO_FLASH_CONFIG_PART_NUMBER
 	int "Index number of config partition (in list below)"
 	default 0
-	depends on STM32L4R9A_DISCO_FLASH_CONFIG_PART
+	depends on STM32L4R9AI_DISCO_FLASH_CONFIG_PART
 	---help---
 		Specifies the index number of the config data partition
 		from the partition list.
 
-config STM32L4R9A_DISCO_FLASH_PART_LIST
+config STM32L4R9AI_DISCO_FLASH_PART_LIST
 	string "Flash partition size list"
 	default "4,8188"
-	depends on STM32L4R9A_DISCO_FLASH_PART
+	depends on STM32L4R9AI_DISCO_FLASH_PART
 	---help---
 		Comma separated list of partition sizes in KB.
 
-config STM32L4R9A_DISCO_FLASH_PART_NAMES
+config STM32L4R9AI_DISCO_FLASH_PART_NAMES
 	string "Flash partition name list"
 	default "config,rfs"
-	depends on STM32L4R9A_DISCO_FLASH_PART
+	depends on STM32L4R9AI_DISCO_FLASH_PART
 	depends on MTD_PARTITION_NAMES
 	---help---
 		Comma separated list of partition names.
 
-config STM32L4R9A_DISCO_RAMMTD
+config STM32L4R9AI_DISCO_RAMMTD
 	bool "MTD driver for SMARTFS RAM disk"
 	default n
 	select MTD
@@ -70,17 +70,17 @@ config STM32L4R9A_DISCO_RAMMTD
 	---help---
 		Configures an MTD based RAM device for use with SMARTFS.
 
-config STM32L4R9A_DISCO_RAMMTD_MINOR
+config STM32L4R9AI_DISCO_RAMMTD_MINOR
 	int "Minor number for RAM /dev/smart entry"
 	default 1
-	depends on STM32L4R9A_DISCO_RAMMTD
+	depends on STM32L4R9AI_DISCO_RAMMTD
 	---help---
 		Sets the minor number for the RAM MTD /dev entry
 
-config STM32L4R9A_DISCO_RAMMTD_SIZE
+config STM32L4R9AI_DISCO_RAMMTD_SIZE
 	int "Size in KB of the RAM device to create"
 	default 32
-	depends on STM32L4R9A_DISCO_RAMMTD
+	depends on STM32L4R9AI_DISCO_RAMMTD
 	---help---
 		Sets the size of static RAM allocation for the SMART RAM device
 
@@ -133,7 +133,7 @@ config PM_SLEEP_WAKEUP_NSEC
 	---help---
 		Number of additional nanoseconds to wait in PM_SLEEP before going to PM_STANDBY mode.
 
-config STM32L4R9A_DISCO_ILI9341
+config STM32L4R9AI_DISCO_ILI9341
 	bool "LCD driver for ILI9341 Liquid Crystal Display Controller"
 	default n
 	---help---
@@ -141,71 +141,71 @@ config STM32L4R9A_DISCO_ILI9341
 		Driver. This sub driver supports only communication with the display driver
 		connected via 4-wire serial (spi) mcu interface.
 
-config STM32L4R9A_DISCO_ILI9341_SPIFREQUENCY
+config STM32L4R9AI_DISCO_ILI9341_SPIFREQUENCY
 	int "SPI frequency"
 	default 12000000
-	depends on STM32L4R9A_DISCO_ILI9341
+	depends on STM32L4R9AI_DISCO_ILI9341
 	---help---
 		Define the bus freqency of the spi device.
 
-config STM32L4R9A_DISCO_ILI9341_SPIBITS16
+config STM32L4R9AI_DISCO_ILI9341_SPIBITS16
 	bool "Enable 16 bit pixel read/write"
 	default n
-	depends on STM32L4R9A_DISCO_ILI9341
+	depends on STM32L4R9AI_DISCO_ILI9341
 	---help---
 		This enables faster 16-bit spi mode for transmitting or receiving pixel data
 		to or from the display gram. But uses default 8-bit spi mode for all other
 		display operations.
 
-config STM32L4R9A_DISCO_ILI9341_LCDIFACE
+config STM32L4R9AI_DISCO_ILI9341_LCDIFACE
 	bool "Enable support for TinyAra lcd interface"
 	default n
-	depends on STM32L4R9A_DISCO_ILI9341 && LCD_ILI9341
+	depends on STM32L4R9AI_DISCO_ILI9341 && LCD_ILI9341
 	---help---
 		Enable lcd driver support for the TinyAra lcd interface.
 
-config STM32L4R9A_DISCO_ILI9341_LCDDEVICE
+config STM32L4R9AI_DISCO_ILI9341_LCDDEVICE
 	int "LCD interface"
 	default 0
 	range 0 1
-	depends on STM32L4R9A_DISCO_ILI9341_LCDIFACE
+	depends on STM32L4R9AI_DISCO_ILI9341_LCDIFACE
 	---help---
 		Define the lcd interface which should be used. This must be
 		corresponding to the configured ili9341 lcd device in the driver
 		section.
 
-config STM32L4R9A_DISCO_ILI9341_FBIFACE
+config STM32L4R9AI_DISCO_ILI9341_FBIFACE
 	bool "Enable support for TinyAra frambuffer interface"
 	default n
-	depends on STM32L4R9A_DISCO_ILI9341 && STM32_LTDC
+	depends on STM32L4R9AI_DISCO_ILI9341 && STM32_LTDC
 	---help---
 		Enable lcd driver support for the TinyAra framebuffer interface to displaying
 		data via ltdc controller of the stm32f429i mcu.
 
-if STM32L4R9A_DISCO_ILI9341_FBIFACE
+if STM32L4R9AI_DISCO_ILI9341_FBIFACE
 
 choice
 	prompt "LCD Orientation"
-	default STM32L4R9A_DISCO_ILI9341_FBIFACE_PORTRAIT
+	default STM32L4R9AI_DISCO_ILI9341_FBIFACE_PORTRAIT
 	---help---
 		Configure display orientation.
 
-config STM32L4R9A_DISCO_ILI9341_FBIFACE_LANDSCAPE
+config STM32L4R9AI_DISCO_ILI9341_FBIFACE_LANDSCAPE
 	bool "Landscape orientation"
 	---help---
 		Define for "landscape" orientation support.
 
-config STM32L4R9A_DISCO_ILI9341_FBIFACE_PORTRAIT
+config STM32L4R9AI_DISCO_ILI9341_FBIFACE_PORTRAIT
 	bool "Portrait orientation"
 	---help---
 		Define for "portrait" orientation support.
 
-config STM32L4R9A_DISCO_ILI9341_FBIFACE_RLANDSCAPE
+config STM32L4R9AI_DISCO_ILI9341_FBIFACE_RLANDSCAPE
 	bool "Reverse landscape orientation"
 	---help---
 		Define for "reverse landscape" orientation support.
 
-config STM32L4R9A_DISCO_ILI9341_FBIFACE_RORTRAIT
+config STM32L4R9AI_DISCO_ILI9341_FBIFACE_RORTRAIT
 	bool "Reverse portrait display"
 	---help---
 		Define for "reverse portrait" orientation support.

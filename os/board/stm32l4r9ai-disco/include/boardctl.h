@@ -1,8 +1,8 @@
 /************************************************************************************
- * arch/arm/src/stm32l4/hardware/stm32l4_syscfg.h
+ * configs/stm32l4r9ai-disco/include/boardctl.h
  *
- *   Copyright (C) 2015 Sebastien Lorquet. All rights reserved.
- *   Author: Sebastien Lorquet <sebastien@lorquet.fr>
+ *   Copyright (C) 2016 dev@ziggurat29.com. All rights reserved.
+ *   Author: dev@ziggurat29.com
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,26 +33,20 @@
  *
  ************************************************************************************/
 
-#ifndef __ARCH_ARM_SRC_STM32L4_HARDWARE_STM32L4_SYSCFG_H
-#define __ARCH_ARM_SRC_STM32L4_HARDWARE_STM32L4_SYSCFG_H
+#ifndef __CONFIGS_STM32L4R9AI_DISCO_INCLUDE_BOARDCTL_H
+#define __CONFIGS_STM32L4R9AI_DISCO_INCLUDE_BOARDCTL_H
 
-/************************************************************************************
+/****************************************************************************
  * Included Files
- ************************************************************************************/
+ ****************************************************************************/
 
-#include <tinyara/config.h>
-#include "chip.h"
+#include <sys/boardctl.h>
 
-#if defined(CONFIG_STM32L4_STM32L4X3)
-#  include "chip/stm32l4x3xx_syscfg.h"
-#elif defined(CONFIG_STM32L4_STM32L4X5)
-#  include "chip/stm32l4x5xx_syscfg.h"
-#elif defined(CONFIG_STM32L4_STM32L4X6)
-#  include "chip/stm32l4x6xx_syscfg.h"
-#elif defined(CONFIG_STM32L4_STM32L4XR)
-#  include "chip/stm32l4xrxx_syscfg.h"
-#else
-#  error "Unsupported STM32 L4 chip"
-#endif
+/****************************************************************************
+ * Pre-processor Definitions
+ ****************************************************************************/
 
-#endif /* __ARCH_ARM_SRC_STM32L4_HARDWARE_STM32L4_SYSCFG_H */
+#define BIOC_ENTER_MEMMAP   BOARDIOC_USER+1
+#define BIOC_EXIT_MEMMAP    BOARDIOC_USER+2
+
+#endif  /* __CONFIGS_STM32L4R9AI_DISCO_INCLUDE_BOARDCTL_H */

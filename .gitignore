@@ -29,3 +29,5 @@ tags
 *.tmp.*
 *.log
 *.log.old
+/.cproject
+/.project

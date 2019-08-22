@@ -1,8 +1,8 @@
-/************************************************************************************
- * arch/arm/src/stm32l4/hardware/stm32l4_syscfg.h
+/*****************************************************************************
+ * configs/stm32l4r9ai-disco/src/stm32_dac.c
  *
- *   Copyright (C) 2015 Sebastien Lorquet. All rights reserved.
- *   Author: Sebastien Lorquet <sebastien@lorquet.fr>
+ *   Copyright (C) 2017-2018 Haltian Ltd. All rights reserved.
+ *   Authors: Juha Niskanen <juha.niskanen@haltian.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,26 +33,64 @@
  *
  ************************************************************************************/
 
-#ifndef __ARCH_ARM_SRC_STM32L4_HARDWARE_STM32L4_SYSCFG_H
-#define __ARCH_ARM_SRC_STM32L4_HARDWARE_STM32L4_SYSCFG_H
-
 /************************************************************************************
  * Included Files
  ************************************************************************************/
 
 #include <tinyara/config.h>
-#include "chip.h"
+#include <errno.h>
+#include <debug.h>
 
-#if defined(CONFIG_STM32L4_STM32L4X3)
-#  include "chip/stm32l4x3xx_syscfg.h"
-#elif defined(CONFIG_STM32L4_STM32L4X5)
-#  include "chip/stm32l4x5xx_syscfg.h"
-#elif defined(CONFIG_STM32L4_STM32L4X6)
-#  include "chip/stm32l4x6xx_syscfg.h"
-#elif defined(CONFIG_STM32L4_STM32L4XR)
-#  include "chip/stm32l4xrxx_syscfg.h"
-#else
-#  error "Unsupported STM32 L4 chip"
+#include <tinyara/board.h>
+#include <tinyara/analog/dac.h>
+
+#include "stm32l4_gpio.h"
+#include "stm32l4_dac.h"
+#include "stm32l4r9ai-disco.h"
+
+#include <arch/board/board.h>
+
+/************************************************************************************
+ * Private Data
+ ************************************************************************************/
+
+static struct dac_dev_s *g_dac;
+
+/************************************************************************************
+ * Public Functions
+ ************************************************************************************/
+
+/************************************************************************************
+ * Name: stm32l4_dac_setup
+ ************************************************************************************/
+
+int stm32l4_dac_setup(void)
+{
+  static bool initialized = false;
+
+  if (!initialized)
+    {
+#ifdef CONFIG_STM32L4_DAC1
+      int ret;
+
+      g_dac = stm32l4_dacinitialize(0);
+      if (g_dac == NULL)
+        {
+          aerr("ERROR: Failed to get DAC interface\n");
+          return -ENODEV;
+        }
+
+      /* Register the DAC driver at "/dev/dac0" */
+
+      ret = dac_register("/dev/dac0", g_dac);
+      if (ret < 0)
+        {
+          aerr("ERROR: dac_register failed: %d\n", ret);
+          return ret;
+        }
 #endif
+      initialized = true;
+    }
 
-#endif /* __ARCH_ARM_SRC_STM32L4_HARDWARE_STM32L4_SYSCFG_H */
+  return OK;
+}

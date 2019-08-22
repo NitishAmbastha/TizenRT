@@ -1,8 +1,9 @@
 /************************************************************************************
- * arch/arm/src/stm32l4/stm32l4_firewall.h
+ * configs/stm32l4r9ai-disco/src/stm32_boot.c
  *
- *   Copyright (C) 2016 Sebastien Lorquet. All rights reserved.
- *   Author: Sebastien Lorquet <sebastien@lorquet.fr>
+ *   Copyright (C) 2018 Gregory Nutt. All rights reserved.
+ *   Author: Gregory Nutt <gnutt@nuttx.org>
+ *           Juha Niskanen <juha.niskanen@haltian.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,84 +34,82 @@
  *
  ************************************************************************************/
 
-#ifndef __ARCH_ARM_SRC_STM32L4_STM32L4_FIREWALL_H
-#define __ARCH_ARM_SRC_STM32L4_STM32L4_FIREWALL_H
-
 /************************************************************************************
  * Included Files
  ************************************************************************************/
 
 #include <tinyara/config.h>
-#include <sys/types.h>
 
-#include "chip.h"
+#include <debug.h>
 
-/* Include the correct firewall register definitions for this STM32L4 family */
+#include <tinyara/arch.h>
+#include <tinyara/board.h>
+#include <tinyara/spi/spi.h>
 
-#if defined(CONFIG_STM32L4_STM32L4X3)
-#  include "chip/stm32l4x3xx_firewall.h"
-#elif defined(CONFIG_STM32L4_STM32L4X5)
-#  include "chip/stm32l4x5xx_firewall.h"
-#elif defined(CONFIG_STM32L4_STM32L4X6)
-#  include "chip/stm32l4x6xx_firewall.h"
-#elif defined(CONFIG_STM32L4_STM32L4XR)
-#  include "chip/stm32l4xrxx_firewall.h"
-#else
-#  error "Unsupported STM32L4 chip"
-#endif
+#include <arch/board/board.h>
+
+#include "up_arch.h"
+#include "stm32l4r9ai-disco.h"
 
 /************************************************************************************
- * Public Types
- ************************************************************************************/
-
-struct stm32l4_firewall_t
-{
-  uintptr_t  codestart;
-  size_t     codelen;
-  uintptr_t  nvdatastart;
-  size_t     nvdatalen;
-  uintptr_t  datastart;
-  size_t     datalen;
-  uint8_t    datashared : 1;
-  uint8_t    dataexec   : 1;
-};
-
-/************************************************************************************
- * Public Data
- ************************************************************************************/
-
-#ifndef __ASSEMBLY__
-
-#undef EXTERN
-#if defined(__cplusplus)
-#define EXTERN extern "C"
-extern "C"
-{
-#else
-#define EXTERN extern
-#endif
-
-/************************************************************************************
- * Public Functions
- ************************************************************************************/
-
-/****************************************************************************
- * Name: stm32l4_firewallsetup
+ * Name: stm32l4_board_initialize
  *
  * Description:
- *   Configure the STM32L4 firewall. After this, protected code will only
- *   be accessible via the "entry gate".
- *   Once enabled, the firewall cannot be enabled until the next reset.
- *   Returns 0 when OK, -1 when addresses and length are not properly aligned.
+ *   All STM32L4 architectures must provide the following entry point.  This entry point
+ *   is called early in the initialization -- after all memory has been configured
+ *   and mapped but before any devices have been initialized.
+ *
+ ************************************************************************************/
+
+void stm32l4_board_initialize(void)
+{
+  /* Configure on-board LEDs if LED support has been selected. */
+
+#ifdef CONFIG_ARCH_LEDS
+  board_autoled_initialize();
+#endif
+
+  /* Configure SPI chip selects if 1) SP2 is not disabled, and 2) the weak function
+   * stm32_spiinitialize() has been brought into the link.
+   */
+
+#ifdef CONFIG_STM32L4_SPI
+  stm32_spiinitialize();
+#endif
+
+#ifdef CONFIG_STM32L4_OTGFS
+  /* Initialize USB if the 1) OTG FS controller is in the configuration and 2)
+   * disabled, and 3) the weak function stm32_usbinitialize() has been brought
+   * into the build. Presumably either CONFIG_USBDEV or CONFIG_USBHOST is also
+   * selected.
+   */
+  stm32l4_usbinitialize();
+#endif
+}
+
+/****************************************************************************
+ * Name: board_late_initialize
+ *
+ * Description:
+ *   If CONFIG_BOARD_LATE_INITIALIZE is selected, then an additional
+ *   initialization call will be performed in the boot-up sequence to a
+ *   function called board_late_initialize().  board_late_initialize() will be
+ *   called immediately after up_intiialize() is called and just before the
+ *   initial application is started.  This additional initialization phase
+ *   may be used, for example, to initialize board-specific device drivers.
  *
  ****************************************************************************/
 
-int stm32l4_firewallsetup(FAR struct stm32l4_firewall_t *setup);
+#ifdef CONFIG_BOARD_LATE_INITIALIZE
+void board_late_initialize(void)
+{
+  /* Perform NSH initialization here instead of from the NSH.  This
+   * alternative NSH initialization is necessary when NSH is ran in user-space
+   * but the initialization function must run in kernel space.
+   */
 
-#undef EXTERN
-#if defined(__cplusplus)
+#if defined(CONFIG_NSH_LIBRARY) && !defined(CONFIG_NSH_ARCHINIT)
+  board_app_initialize(0);
+#endif
 }
 #endif
-
-#endif /* __ASSEMBLY__ */
-#endif /* __ARCH_ARM_SRC_STM32L4_STM32L4_FIREWALL_H */
