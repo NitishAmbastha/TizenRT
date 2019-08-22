@@ -305,7 +305,7 @@ endif
 if ARCH_BOARD_IMXRT1050_EVK
 source board/imxrt1050-evk/Kconfig
 endif
-if ARCH_BOARD_STM32F429I_DISCO
+if ARCH_BOARD_STM32L4R9AI_DISCO
 source board/stm32l4r9ai-disco/Kconfig
 endif
 comment "Board-Partition Options"
