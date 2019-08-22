@@ -44,7 +44,7 @@
 #include <tinyara/arch.h>
 #include <tinyara/irq.h>
 #include <tinyara/board.h>
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 
 #include "chip.h"
 #include "stm32l4_pm.h"

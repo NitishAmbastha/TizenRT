@@ -58,7 +58,7 @@
 #include <tinyara/kmalloc.h>
 #include <tinyara/clock.h>
 #include <tinyara/semaphore.h>
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 #include <tinyara/drivers/1wire.h>
 
 #include <arch/board/board.h>

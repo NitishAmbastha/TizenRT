@@ -41,7 +41,7 @@
  ****************************************************************************/
 
 #include <tinyara/config.h>
-#include <tinyara/i2c/i2c_master.h>
+#include <tinyara/i2c_master.h>
 
 #include "chip.h"
 #include "chip/stm32l4_i2c.h"

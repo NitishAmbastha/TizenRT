@@ -83,6 +83,7 @@
  */
 
 volatile uint32_t *g_current_regs[1];
+#define CURRENT_REGS (g_current_regs[0])
 
 /* This is the address of the  exception vector table (determined by the
  * linker script).

@@ -44,7 +44,7 @@
 #include <tinyara/arch.h>
 #include <tinyara/board.h>
 #include <arch/board/board.h>
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 
 #include "stm32l4r9ai-disco.h"
 

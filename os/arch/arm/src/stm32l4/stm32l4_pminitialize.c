@@ -39,7 +39,7 @@
 
 #include <tinyara/config.h>
 
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 
 #include "up_internal.h"
 #include "stm32l4_pm.h"

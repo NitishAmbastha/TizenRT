@@ -44,7 +44,7 @@
 #include <debug.h>
 
 #include <arch/board/board.h>
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 
 #include "chip.h"
 #include "up_arch.h"

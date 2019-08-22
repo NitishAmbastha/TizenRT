@@ -139,7 +139,7 @@ config ARCH_BOARD
 	default "esp32_devkit"       if ARCH_BOARD_ESP32_FAMILY
 	default "imxrt1020-evk"      if ARCH_BOARD_IMXRT1020_EVK
 	default "imxrt1050-evk"      if ARCH_BOARD_IMXRT1050_EVK
-	default "stm32l4r9ai-disco"   if ARCH_BOARD_STM32L4R9AI_DISCO
+	default "stm32l4r9ai-disco"  if ARCH_BOARD_STM32L4R9AI_DISCO
 	
 comment "Common Board Options"
 

@@ -52,7 +52,7 @@
 #include <tinyara/arch.h>
 #include <tinyara/fs/ioctl.h>
 #include <tinyara/serial/serial.h>
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 
 #ifdef CONFIG_SERIAL_TERMIOS
 #  include <termios.h>

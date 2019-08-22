@@ -268,8 +268,8 @@
 #include <tinyara/clock.h>
 #include <tinyara/semaphore.h>
 #include <tinyara/kmalloc.h>
-#include <tinyara/power/pm.h>
-#include <tinyara/i2c/i2c_master.h>
+#include <tinyara/pm/pm.h>
+#include <tinyara/i2c_master.h>
 
 #include <arch/board/board.h>
 

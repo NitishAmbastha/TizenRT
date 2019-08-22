@@ -57,7 +57,7 @@
 #include <tinyara/irq.h>
 #include <tinyara/arch.h>
 #include <tinyara/fs/ioctl.h>
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 #include <tinyara/analog/adc.h>
 #include <tinyara/analog/ioctl.h>
 

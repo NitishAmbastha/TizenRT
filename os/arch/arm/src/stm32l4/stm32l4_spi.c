@@ -79,7 +79,7 @@
 #include <tinyara/arch.h>
 #include <tinyara/semaphore.h>
 #include <tinyara/spi/spi.h>
-#include <tinyara/power/pm.h>
+#include <tinyara/pm/pm.h>
 
 #include "up_internal.h"
 #include "up_arch.h"
