@@ -108,8 +108,8 @@
  *   TXD: PD5
  */
 
-#define GPIO_USART2_RX   GPIO_USART2_RX_2    /* PD6 */
-#define GPIO_USART2_TX   GPIO_USART2_TX_2    /* PD5 */
+#define GPIO_USART2_RX   GPIO_USART2_RX_1    /* PD6 */
+#define GPIO_USART2_TX   GPIO_USART2_TX_1    /* PD5 */
 
 /* UART4: Connected to PA0, PA1
  *   RXD: PA1 -> CN11 D5
