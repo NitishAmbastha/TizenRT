@@ -88,7 +88,7 @@ int bchdev_unregister(FAR const char *chardev)
 	int ret;
 
 	/* Sanity check */
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 	if (!chardev) {
 		return -EINVAL;
 	}

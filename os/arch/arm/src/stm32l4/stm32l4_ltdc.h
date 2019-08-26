@@ -1,25 +1,9 @@
-/******************************************************************
- *
- * Copyright 2018 Samsung Electronics All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- ******************************************************************/
-
 /****************************************************************************
+ * arch/arm/src/stm32l4/stm32l4_ltdc.h
  *
- *   Copyright (C) 2016 Gregory Nutt. All rights reserved.
- *   Author: Gregory Nutt <gnutt@nuttx.org>
+ *   Copyright (C) 2013-2014, 2018 Ken Pettit. All rights reserved.
+ *   Authors: Ken Pettit <pettitd@gmail.com>
+ *            Marco Krahl <ocram.lhark@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,39 +34,84 @@
  *
  ****************************************************************************/
 
+#ifndef __ARCH_ARM_SRC_STM32L4_STM32L4_LTDC_H
+#define __ARCH_ARM_SRC_STM32L4_STM32L4_LTDC_H
+
 /****************************************************************************
  * Included Files
  ****************************************************************************/
 
-#include <stdint.h>
-#include <debug.h>
+#include <tinyara/config.h>
 
-#include <tinyara/irq.h>
-#include <tinyara/arch.h>
+#include <stdbool.h>
+#include <semaphore.h>
 
-#include "xtensa.h"
+#include <tinyara/video/fb.h>
+//#include <tinyary/nx/nxglib.h>
 
 /****************************************************************************
  * Public Functions
  ****************************************************************************/
 
 /****************************************************************************
- * Name: modifyreg16
+ * Name: stm32_ltdcreset
  *
  * Description:
- *   Atomically modify the specified bits in a memory mapped register
+ *   Reset LTDC via APB2RSTR
  *
  ****************************************************************************/
 
-void modifyreg16(unsigned int addr, uint16_t clearbits, uint16_t setbits)
-{
-	irqstate_t flags;
-	uint16_t regval;
+void stm32l4_ltdcreset(void);
 
-	flags = irqsave();
-	regval = getreg16(addr);
-	regval &= ~clearbits;
-	regval |= setbits;
-	putreg16(regval, addr);
-	up_irq_restore(flags);
-}
+/*****************************************************************************
+ * Name: stm32_ltdcinitialize
+ *
+ * Description:
+ *   Initialize the ltdc controller
+ *
+ * Returned Value:
+ *   OK
+ *
+ ****************************************************************************/
+
+int stm32l4_ltdcinitialize(void);
+
+/*****************************************************************************
+ * Name: stm32_ltdcuninitialize
+ *
+ * Description:
+ *   Unitialize the ltdc controller
+ *
+ ****************************************************************************/
+
+void stm32l4_ltdcuninitialize(void);
+
+/*****************************************************************************
+ * Name: stm32_ltdcgetvplane
+ *
+ * Description:
+ *   Get video plane reference used by framebuffer interface
+ *
+ * Parameter:
+ *   vplane - Video plane
+ *
+ * Returned Value:
+ *   Video plane reference
+ *
+ ****************************************************************************/
+
+FAR struct fb_vtable_s *stm32l4_ltdcgetvplane(int vplane);
+
+/****************************************************************************
+ * Name: stm32_lcd_backlight
+ *
+ * Description:
+ *   If CONFIG_STM32F7_LCD_BACKLIGHT is defined, then the board-specific logic
+ *   must provide this interface to turn the backlight on and off.
+ *
+ ****************************************************************************/
+
+#ifdef CONFIG_STM32L4_LCD_BACKLIGHT
+void stm32l4_backlight(bool blon);
+#endif
+#endif /* __ARCH_ARM_SRC_STM32L4_STM32L4_LTDC_H */

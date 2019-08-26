@@ -192,7 +192,7 @@ static void imxrt_dumpnvic(const char *msg, int irq)
  *
  ****************************************************************************/
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 static int imxrt_nmi(int irq, FAR void *context, FAR void *arg)
 {
 	(void)irqsave();
@@ -441,7 +441,7 @@ void up_irqinitialize(void)
 
 	/* Attach all other processor exceptions (except reset and sys tick) */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 	irq_attach(IMXRT_IRQ_NMI, imxrt_nmi, NULL);
 #ifndef CONFIG_ARMV7M_MPU
 	irq_attach(IMXRT_IRQ_MEMFAULT, up_memfault, NULL);

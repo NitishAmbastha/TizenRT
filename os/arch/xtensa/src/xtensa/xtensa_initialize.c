@@ -81,7 +81,7 @@
  *
  ****************************************************************************/
 
-#if defined(CONFIG_ARCH_CALIBRATION) && defined(CONFIG_DEBUG_FEATURES)
+#if defined(CONFIG_ARCH_CALIBRATION) && defined(CONFIG_DEBUG)
 static void up_calibratedelay(void)
 {
 	int i;

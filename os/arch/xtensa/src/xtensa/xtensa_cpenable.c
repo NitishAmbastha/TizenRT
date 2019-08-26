@@ -92,7 +92,7 @@ void xtensa_coproc_enable(struct xtensa_cpstate_s *cpstate, int cpset)
 
 	/* These operations must be atomic */
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 	/* Don't enable co-processors that may already be enabled
 	 *
@@ -142,7 +142,7 @@ void xtensa_coproc_disable(struct xtensa_cpstate_s *cpstate, int cpset)
 
 	/* These operations must be atomic */
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 	/* Don't disable co-processors that are already be disabled.
 	 *

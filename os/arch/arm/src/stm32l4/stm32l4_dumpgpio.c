@@ -54,7 +54,7 @@
 #include "stm32l4_gpio.h"
 #include "stm32l4_rcc.h"
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 
 /****************************************************************************
  * Private Data
@@ -150,4 +150,4 @@ int stm32l4_dumpgpio(uint32_t pinset, const char *msg)
   return OK;
 }
 
-#endif /* CONFIG_DEBUG_FEATURES */
+#endif /* CONFIG_DEBUG */

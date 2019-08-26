@@ -160,7 +160,7 @@ void _exit(int status)
 	 * The IRQ state will be restored when the next task is started.
 	 */
 
-	(void)up_irq_save();
+	(void)irqsave();
 
 	sllvdbg("TCB=%p exiting\n", this_task());
 

@@ -231,7 +231,7 @@ static inline void irqrestore(irqstate_t flags)
 
 /* Disable interrupts and return the previous value of the PS register */
 
-static inline uint32_t up_irq_save(void)
+static inline uint32_t irqsave(void)
 {
 	uint32_t ps;
 
@@ -253,7 +253,7 @@ static inline uint32_t up_irq_save(void)
 
 static inline irqstate_t irqsave(void)
 {
-	return up_irq_save();
+	return irqsave();
 }
 
 static inline void up_irq_enable(void)

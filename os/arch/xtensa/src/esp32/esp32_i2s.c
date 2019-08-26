@@ -128,7 +128,7 @@
 #endif
 
 #ifdef CONFIG_DEBUG
-#define CONFIG_DEBUG_FEATURES
+#define CONFIG_DEBUG
 #endif
 
 #define DEBUG_I2S_DRIVER    0

@@ -105,7 +105,7 @@ void up_idle(void)
 	 */
 
 #ifdef CONFIG_SCHED_WORKQUEUE
-	irqstate_t flags = up_irq_save();
+	irqstate_t flags = irqsave();
 	up_irq_restore(flags);
 #endif
 #endif

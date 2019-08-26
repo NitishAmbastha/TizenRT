@@ -155,51 +155,51 @@ static void stm32l4_dumpnvic(const char *msg, int irq)
  *
  ****************************************************************************/
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 static int stm32l4_nmi(int irq, FAR void *context, FAR void *arg)
 {
-  (void)up_irq_save();
-  _err("PANIC!!! NMI received\n");
+  (void)irqsave();
+  dbg("PANIC!!! NMI received\n");
   PANIC();
   return 0;
 }
 
 static int stm32l4_busfault(int irq, FAR void *context, FAR void *arg)
 {
-  (void)up_irq_save();
-  _err("PANIC!!! Bus fault received: %08x\n", getreg32(NVIC_CFAULTS));
+  (void)irqsave();
+  dbg("PANIC!!! Bus fault received: %08x\n", getreg32(NVIC_CFAULTS));
   PANIC();
   return 0;
 }
 
 static int stm32l4_usagefault(int irq, FAR void *context, FAR void *arg)
 {
-  (void)up_irq_save();
-  _err("PANIC!!! Usage fault received: %08x\n", getreg32(NVIC_CFAULTS));
+  (void)irqsave();
+  dbg("PANIC!!! Usage fault received: %08x\n", getreg32(NVIC_CFAULTS));
   PANIC();
   return 0;
 }
 
 static int stm32l4_pendsv(int irq, FAR void *context, FAR void *arg)
 {
-  (void)up_irq_save();
-  _err("PANIC!!! PendSV received\n");
+  (void)irqsave();
+  dbg("PANIC!!! PendSV received\n");
   PANIC();
   return 0;
 }
 
 static int stm32l4_dbgmonitor(int irq, FAR void *context, FAR void *arg)
 {
-  (void)up_irq_save();
-  _err("PANIC!!! Debug Monitor received\n");
+  (void)irqsave();
+  dbg("PANIC!!! Debug Monitor received\n");
   PANIC();
   return 0;
 }
 
 static int stm32l4_reserved(int irq, FAR void *context, FAR void *arg)
 {
-  (void)up_irq_save();
-  _err("PANIC!!! Reserved interrupt\n");
+  (void)irqsave();
+  dbg("PANIC!!! Reserved interrupt\n");
   PANIC();
   return 0;
 }
@@ -380,7 +380,7 @@ void up_irqinitialize(void)
 
   /* Attach all other processor exceptions (except reset and sys tick) */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   irq_attach(STM32L4_IRQ_NMI, stm32l4_nmi, NULL);
 #ifndef CONFIG_ARM_MPU
   irq_attach(STM32L4_IRQ_MEMFAULT, up_memfault, NULL);

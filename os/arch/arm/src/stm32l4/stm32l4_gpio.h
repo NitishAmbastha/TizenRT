@@ -353,7 +353,7 @@ int stm32l4_gpiosetevent(uint32_t pinset, bool risingedge, bool fallingedge,
  *
  ************************************************************************************/
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 int stm32l4_dumpgpio(uint32_t pinset, const char *msg);
 #else
 #  define stm32l4_dumpgpio(p,m)

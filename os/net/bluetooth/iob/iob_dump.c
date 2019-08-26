@@ -46,7 +46,7 @@
 
 #include "iob.h"
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 
 /****************************************************************************
  * Pre-processor definitions
@@ -146,4 +146,4 @@ void iob_dump(FAR const char *msg, FAR struct iob_s *iob, unsigned int len, unsi
 	}
 }
 
-#endif							/* CONFIG_DEBUG_FEATURES */
+#endif							/* CONFIG_DEBUG */

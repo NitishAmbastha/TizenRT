@@ -2055,7 +2055,7 @@ static int imxrt_recvshortcrc(FAR struct sdio_dev_s *dev, uint32_t cmd,
 	 *     0         1               End bit
 	 */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 	if (!rshort) {
 		mcerr("ERROR: rshort=NULL\n");
 		ret = -EINVAL;
@@ -2107,7 +2107,7 @@ static int imxrt_recvlong(FAR struct sdio_dev_s *dev, uint32_t cmd,
 	 *     0         1               End bit
 	 */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 	/* Check that R1 is the correct response to this command */
 
 	if ((cmd & MMCSD_RESPONSE_MASK) != MMCSD_R2_RESPONSE) {
@@ -2169,7 +2169,7 @@ static int imxrt_recvshort(FAR struct sdio_dev_s *dev, uint32_t cmd,
 
 	/* Check that this is the correct response to this command */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 	if ((cmd & MMCSD_RESPONSE_MASK) != MMCSD_R3_RESPONSE &&
 	    (cmd & MMCSD_RESPONSE_MASK) != MMCSD_R7_RESPONSE) {
 		mcerr("ERROR: Wrong response CMD=%08x\n", cmd);

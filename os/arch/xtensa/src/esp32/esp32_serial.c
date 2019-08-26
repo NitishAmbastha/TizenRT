@@ -421,7 +421,7 @@ static void esp32_disableallints(struct esp32_dev_s *priv, uint32_t *intena)
 
 	/* The following must be atomic */
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 	if (intena) {
 		/* Return the current interrupt mask */
@@ -985,7 +985,7 @@ static void esp32_rxint(struct uart_dev_s *dev, bool enable)
 	irqstate_t flags;
 	int regval;
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 	if (enable) {
 		/* Receive an interrupt when their is anything in the Rx data register (or an Rx
@@ -1050,7 +1050,7 @@ static void esp32_txint(struct uart_dev_s *dev, bool enable)
 	irqstate_t flags;
 	int regval;
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 	if (enable) {
 		/* Set to receive an interrupt when the TX holding register register

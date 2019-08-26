@@ -140,7 +140,7 @@ static void xtensa_assert(int errorcode)
 	if (CURRENT_REGS || this_task()->pid == 0) {
 		/* Blink the LEDs forever */
 
-		(void)up_irq_save();
+		(void)irqsave();
 		for (;;) {
 #ifdef CONFIG_ARCH_LEDS
 			board_autoled_on(LED_PANIC);

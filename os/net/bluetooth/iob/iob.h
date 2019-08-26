@@ -53,7 +53,7 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
-#if defined(CONFIG_DEBUG_FEATURES) && defined(CONFIG_IOB_DEBUG)
+#if defined(CONFIG_DEBUG) && defined(CONFIG_IOB_DEBUG)
 #ifdef CONFIG_CPP_HAVE_VARARGS
 
 #define ioberr(format, ...)    _err(format, ##__VA_ARGS__)
@@ -81,7 +81,7 @@
 #define iobinfo                (void)
 
 #endif
-#endif							/* CONFIG_DEBUG_FEATURES && CONFIG_IOB_DEBUG */
+#endif							/* CONFIG_DEBUG && CONFIG_IOB_DEBUG */
 
 /****************************************************************************
  * Public Data

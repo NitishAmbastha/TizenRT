@@ -168,7 +168,7 @@
 /* Debug ****************************************************************************/
 /* Non-standard debug that may be enabled just for testing the quadrature encoder */
 
-#ifndef CONFIG_DEBUG_FEATURES
+#ifndef CONFIG_DEBUG
 #  undef CONFIG_DEBUG_SENSORS
 #endif
 

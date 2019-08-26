@@ -109,7 +109,7 @@ static void esp32_irq_dump(const char *msg, int irq)
 {
 	irqstate_t flags;
 
-	flags = up_irq_save();
+	flags = irqsave();
 #warning Missing logic
 	up_irq_restore(flags);
 }

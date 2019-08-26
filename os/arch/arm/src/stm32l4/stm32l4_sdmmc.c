@@ -140,7 +140,7 @@
 #  endif
 #endif
 
-#if !defined(CONFIG_DEBUG_FS) || !defined(CONFIG_DEBUG_FEATURES)
+#if !defined(CONFIG_DEBUG_FS) || !defined(CONFIG_DEBUG)
 #  undef CONFIG_CONFIG_STM32L4_SDMMC_XFRDEBUG
 #endif
 
@@ -2275,7 +2275,7 @@ static int stm32_recvshortcrc(FAR struct sdio_dev_s *dev, uint32_t cmd,
                               uint32_t *rshort)
 {
   struct stm32_dev_s *priv = (struct stm32_dev_s *)dev;
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   uint32_t respcmd;
 #endif
   uint32_t regval;
@@ -2303,7 +2303,7 @@ static int stm32_recvshortcrc(FAR struct sdio_dev_s *dev, uint32_t cmd,
    *     0         1               End bit
    */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if (!rshort)
     {
       mcerr("ERROR: rshort=NULL\n");
@@ -2335,7 +2335,7 @@ static int stm32_recvshortcrc(FAR struct sdio_dev_s *dev, uint32_t cmd,
           mcerr("ERROR: CRC failure: %08x\n", regval);
           ret = -EIO;
         }
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
       else
         {
           /* Check response received is of desired command */
@@ -2377,7 +2377,7 @@ static int stm32_recvlong(FAR struct sdio_dev_s *dev, uint32_t cmd,
    *     0         1               End bit
    */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   /* Check that R1 is the correct response to this command */
 
   if ((cmd & MMCSD_RESPONSE_MASK) != MMCSD_R2_RESPONSE)
@@ -2436,7 +2436,7 @@ static int stm32_recvshort(FAR struct sdio_dev_s *dev, uint32_t cmd,
 
   /* Check that this is the correct response to this command */
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if ((cmd & MMCSD_RESPONSE_MASK) != MMCSD_R3_RESPONSE &&
       (cmd & MMCSD_RESPONSE_MASK) != MMCSD_R7_RESPONSE)
     {

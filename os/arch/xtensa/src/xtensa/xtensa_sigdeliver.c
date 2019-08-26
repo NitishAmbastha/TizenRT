@@ -161,7 +161,7 @@ void xtensa_sig_deliver(void)
 	 */
 
 	svdbg("Resuming\n");
-	(void)up_irq_save();
+	(void)irqsave();
 
 	/* Restore the saved errno value */
 
@@ -174,7 +174,7 @@ void xtensa_sig_deliver(void)
 
 	DEBUGASSERT(rtcb->irqcount == 0);
 	while (rtcb->irqcount < saved_irqcount) {
-		(void)up_irq_save();
+		(void)irqsave();
 	}
 #endif
 

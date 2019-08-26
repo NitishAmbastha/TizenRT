@@ -260,7 +260,7 @@ int esp32_alloc_cpuint(uint32_t intmask)
 	 * available.
 	 */
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 #ifdef CONFIG_SMP
 	if (this_cpu() != 0) {
@@ -561,7 +561,7 @@ void esp32_free_cpuint(int cpuint)
 	/* Mark the CPU interrupt as available */
 
 	bitmask = (1ul << cpuint);
-	flags = up_irq_save();
+	flags = irqsave();
 
 #ifdef CONFIG_SMP
 	if (this_cpu() != 0) {

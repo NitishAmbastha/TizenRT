@@ -208,11 +208,11 @@
  *
  *  Debugging output enabled with:
  *
- *    CONFIG_DEBUG_FEATURES and CONFIG_DEBUG_I2C_{ERROR|WARN|INFO}
+ *    CONFIG_DEBUG and CONFIG_DEBUG_I2C_{ERROR|WARN|INFO}
  *
  *  ISR Debugging output may be enabled with:
  *
- *    CONFIG_DEBUG_FEATURES and CONFIG_DEBUG_I2C_INFO
+ *    CONFIG_DEBUG and CONFIG_DEBUG_I2C_INFO
  *
  * ------------------------------------------------------------------------------
  *

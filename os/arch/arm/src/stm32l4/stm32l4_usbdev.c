@@ -2781,7 +2781,7 @@ static int stm32l4_epconfigure(struct usbdev_ep_s *ep,
   uint16_t maxpacket;
   uint8_t  epno;
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if (!ep || !desc)
     {
       usbtrace(TRACE_DEVERROR(STM32L4_TRACEERR_INVALIDPARMS), 0);
@@ -2877,7 +2877,7 @@ static int stm32l4_epdisable(struct usbdev_ep_s *ep)
   irqstate_t flags;
   uint8_t epno;
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if (!ep)
     {
       usbtrace(TRACE_DEVERROR(STM32L4_TRACEERR_INVALIDPARMS), 0);
@@ -2912,7 +2912,7 @@ static struct usbdev_req_s *stm32l4_epallocreq(struct usbdev_ep_s *ep)
 {
   struct stm32l4_req_s *privreq;
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if (!ep)
     {
       usbtrace(TRACE_DEVERROR(STM32L4_TRACEERR_INVALIDPARMS), 0);
@@ -2940,7 +2940,7 @@ static void stm32l4_epfreereq(struct usbdev_ep_s *ep, struct usbdev_req_s *req)
 {
   struct stm32l4_req_s *privreq = (struct stm32l4_req_s *)req;
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if (!ep || !req)
     {
       usbtrace(TRACE_DEVERROR(STM32L4_TRACEERR_INVALIDPARMS), 0);
@@ -2965,7 +2965,7 @@ static int stm32l4_epsubmit(struct usbdev_ep_s *ep, struct usbdev_req_s *req)
   uint8_t epno;
   int ret = OK;
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if (!req || !req->callback || !req->buf || !ep)
     {
       usbtrace(TRACE_DEVERROR(STM32L4_TRACEERR_INVALIDPARMS), 0);
@@ -2978,7 +2978,7 @@ static int stm32l4_epsubmit(struct usbdev_ep_s *ep, struct usbdev_req_s *req)
   usbtrace(TRACE_EPSUBMIT, USB_EPNO(ep->eplog));
   priv = privep->dev;
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
   if (!priv->driver)
     {
       usbtrace(TRACE_DEVERROR(STM32L4_TRACEERR_NOTCONFIGURED),

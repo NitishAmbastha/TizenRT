@@ -177,7 +177,7 @@ int up_create_stack(FAR struct tcb_s *tcb, size_t stack_size, uint8_t ttype)
 			tcb->stack_alloc_ptr = (uint32_t *)kumm_malloc(stack_size);
 		}
 
-#ifdef CONFIG_DEBUG_FEATURES
+#ifdef CONFIG_DEBUG
 		/* Was the allocation successful? */
 
 		if (!tcb->stack_alloc_ptr) {

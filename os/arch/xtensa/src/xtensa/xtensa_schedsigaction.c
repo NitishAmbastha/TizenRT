@@ -116,7 +116,7 @@ void up_schedule_sigaction(struct tcb_s *tcb, sig_deliver_t sigdeliver)
 
 	/* Make sure that interrupts are disabled */
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 	/* Refuse to handle nested signal actions */
 
@@ -225,7 +225,7 @@ void up_schedule_sigaction(struct tcb_s *tcb, sig_deliver_t sigdeliver)
 
 	/* Make sure that interrupts are disabled */
 
-	flags = up_irq_save();
+	flags = irqsave();
 
 	/* Refuse to handle nested signal actions */
 
@@ -336,7 +336,7 @@ void up_schedule_sigaction(struct tcb_s *tcb, sig_deliver_t sigdeliver)
 
 				/* In an SMP configuration, the interrupt disable logic also
 				 * involves spinlocks that are configured per the TCB irqcount
-				 * field.  This is logically equivalent to up_irq_save().
+				 * field.  This is logically equivalent to irqsave().
 				 * The matching call to up_irq_restore() will be
 				 * performed in up_sigdeliver().
 				 */

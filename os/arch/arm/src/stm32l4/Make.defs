@@ -143,6 +143,14 @@ ifeq ($(CONFIG_STM32L4_DMA),y)
 CHIP_CSRCS += stm32l4_dma.c
 endif
 
+ifeq ($(CONFIG_STM32L4_LTDC),y)
+CHIP_CSRCS += stm32l4_ltdc.c
+endif
+
+ifeq ($(CONFIG_STM32L4_DMA2D),y)
+CHIP_CSRCS += stm32l4_dma2d.c
+endif
+
 ifeq ($(CONFIG_USBDEV),y)
 ifeq ($(CONFIG_STM32L4_USBFS),y)
 CHIP_CSRCS += stm32l4_usbdev.c
