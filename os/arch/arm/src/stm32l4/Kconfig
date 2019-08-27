@@ -776,6 +776,7 @@ config STM32L4_STM32L4R9XX
 	select STM32L4_STM32L4XR
 	select STM32L4_HAVE_DMA2D
 	select STM32L4_HAVE_LTDC
+	select STM32L4_HAVE_DSI
 
 config STM32L4_STM32L4S9XX
 	bool
@@ -1014,6 +1015,10 @@ config STM32L4_HAVE_LTDC
 	bool
 	default n
 
+config STM32L4_HAVE_DSI
+	bool
+	default n
+	
 config STM32L4_HAVE_LPTIM1
 	bool
 	default n
@@ -1103,6 +1108,11 @@ config STM32L4_LTDC
 	default n
 	depends on STM32L4_HAVE_LTDC
 
+config STM32L4_DSI
+	bool "DSI"
+	default n
+	depends on STM32L4_HAVE_DSI
+	
 config STM32L4_ADC
 	bool
 	default n

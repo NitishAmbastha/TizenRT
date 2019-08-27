@@ -2984,7 +2984,7 @@ int stm32l4_ltdcinitialize(void)
 	/* Enable the backlight */
 
 #ifdef CONFIG_STM32L4_LCD_BACKLIGHT
-	stm32_backlight(true);
+	stm32l4_backlight(true);
 #endif
 
 	/* Reload shadow register */
