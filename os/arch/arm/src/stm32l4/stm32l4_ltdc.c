@@ -73,7 +73,7 @@
 
 #include "up_arch.h"
 #include "up_internal.h"
-#include "stm32.h"
+#include "stm32l4.h"
 #include "chip/stm32l4_ltdc.h"
 #include "stm32l4_ltdc.h"
 #include "stm32l4_dma2d.h"

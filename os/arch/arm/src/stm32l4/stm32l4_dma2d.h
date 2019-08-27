@@ -60,7 +60,7 @@
 #include <tinyara/config.h>
 #include <tinyara/video/fb.h>
 #include <arch/chip/ltdc.h>
-#include "stm32_ltdc.h"
+#include "stm32l4_ltdc.h"
 
 #ifdef CONFIG_STM32L4_DMA2D
 /******************************************************************************

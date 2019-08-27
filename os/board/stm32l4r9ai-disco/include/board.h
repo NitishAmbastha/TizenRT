@@ -264,6 +264,10 @@
 #define BUTTON_RIGHT_BIT   (1 << BUTTON_RIGHT)
 #define BUTTON_UP_BIT      (1 << BUTTON_UP)
 
+
+#define BOARD_LTDC_WIDTH	(390)
+#define BOARD_LTDC_HEIGHT	(390)
+
 /************************************************************************************
  * Public Data
  ************************************************************************************/
