@@ -67,6 +67,7 @@
 //#include "stm32l4_fsmc.h"
 #include "stm32l4_gpio.h"
 //#include "stm32l4_i2c.h"
+#include "stm32l4_ltdc.h"
 //#include "stm32l4_lcd.h"
 //#include "stm32l4_pwr.h"
 //#include "stm32l4_rcc.h"
@@ -78,5 +79,6 @@
 #include "stm32l4_usbdev.h"
 //#include "stm32l4_wdg.h"
 //#include "stm32l4_lowputc.h"
+//#include "stm32l4_dsi.h"
 
 #endif /* __ARCH_ARM_SRC_STM32L4_STM32L4_H */
