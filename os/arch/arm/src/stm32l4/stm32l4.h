@@ -68,6 +68,7 @@
 #include "stm32l4_gpio.h"
 //#include "stm32l4_i2c.h"
 #include "stm32l4_ltdc.h"
+#include "stm32l4_dma2d.h"
 //#include "stm32l4_lcd.h"
 //#include "stm32l4_pwr.h"
 //#include "stm32l4_rcc.h"

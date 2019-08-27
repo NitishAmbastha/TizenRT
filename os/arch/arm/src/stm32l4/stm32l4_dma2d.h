@@ -1,24 +1,7 @@
 /****************************************************************************
- *
- * Copyright 2018 Samsung Electronics All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
- *
- ****************************************************************************/
-/******************************************************************************
  * arch/arm/src/stm32l4/stm32l4_dma2d.h
  *
- *   Copyright (C) 2014 Marco Krahl. All rights reserved.
+ *   Copyright (C) 2014-2015, 2018 Marco Krahl. All rights reserved.
  *   Author: Marco Krahl <ocram.lhark@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,109 +31,175 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- ******************************************************************************/
+ ****************************************************************************/
 
 #ifndef __ARCH_ARM_SRC_STM32L4_STM32L4_DMA2D_H
 #define __ARCH_ARM_SRC_STM32L4_STM32L4_DMA2D_H
 
-/******************************************************************************
+/****************************************************************************
  * Included Files
- ******************************************************************************/
+ ****************************************************************************/
 
 #include <tinyara/config.h>
 #include <tinyara/video/fb.h>
-#include <arch/chip/ltdc.h>
-#include "stm32l4_ltdc.h"
 
-#ifdef CONFIG_STM32L4_DMA2D
-/******************************************************************************
- * Pre-processor Definitions
- ******************************************************************************/
+#ifdef CONFIG_FB_OVERLAY
 
-/******************************************************************************
+/****************************************************************************
  * Public Types
- ******************************************************************************/
+ ****************************************************************************/
 
-/******************************************************************************
- * Public Data
- ******************************************************************************/
+/* This structure describes DMA2D overlay information */
 
-/******************************************************************************
+struct stm32_dma2d_overlay_s
+{
+  uint8_t    fmt;                         /* DMA2D pixel format */
+  uint8_t    transp_mode;                 /* DMA2D transparency mode */
+  fb_coord_t xres;                        /* X-resolution overlay */
+  fb_coord_t yres;                        /* Y-resolution overlay */
+  FAR struct fb_overlayinfo_s *oinfo;     /* Framebuffer overlay information */
+};
+
+/* DMA2D is controlled by the following interface */
+
+struct dma2d_layer_s
+{
+  /* Name: setclut
+   *
+   * Description:
+   *   Set the cmap table for both foreground and background layer.
+   *   Up to 256 colors supported.
+   *
+   * Parameter:
+   *   cmap  - Reference to the cmap table
+   *
+   * Returned Value:
+   *   On success - OK
+   *   On error   - -EINVAL
+   */
+
+#ifdef CONFIG_STM32_FB_CMAP
+  int (*setclut)(FAR const struct fb_cmap_s * cmap);
+#endif
+
+  /* Name: fillcolor
+   *
+   * Description:
+   *   Fill a specific memory region with a color.
+   *   The caller must ensure that the memory region (area) is within the entire
+   *   overlay.
+   *
+   * Parameter:
+   *   oinfo  - Reference to overlay information
+   *   area   - Reference to the area to fill
+   *   argb   - argb8888 color
+   *
+   * Returned Value:
+   *   On success - OK
+   *   On error   - -EINVAL
+   */
+
+  int (*fillcolor)(FAR struct stm32_dma2d_overlay_s *oinfo,
+                   FAR const struct fb_area_s *area, uint32_t argb);
+
+  /* Name: blit
+   *
+   * Description:
+   *   Copies memory from a source overlay (defined by sarea) to destination
+   *   overlay position (defined by destxpos and destypos) without pixelformat
+   *   conversion. The caller must ensure that the memory region (area) is
+   *   within the entire overlay.
+   *
+   * Parameter:
+   *   doverlay - Reference destination overlay
+   *   destxpos - x-Offset destination overlay
+   *   destypos - y-Offset destination overlay
+   *   soverlay - Reference source overlay
+   *   sarea    - Reference source area
+   *
+   * Returned Value:
+   *   On success - OK
+   *   On error   - -EINVAL
+   */
+
+  int (*blit)(FAR struct stm32_dma2d_overlay_s *doverlay,
+              uint32_t destxpos, uint32_t destypos,
+              FAR struct stm32_dma2d_overlay_s *soverlay,
+              FAR const struct fb_area_s *sarea);
+
+  /* Name: blend
+   *
+   * Description:
+   *   Blends two source memory areas to a destination memory area with
+   *   pixelformat conversion if necessary. The caller must ensure that the
+   *   memory region (area) is within the entire overlays.
+   *
+   * Parameter:
+   *   doverlay - Destination overlay
+   *   destxpos - x-Offset destination overlay
+   *   destypos - y-Offset destination overlay
+   *   foverlay - Foreground overlay
+   *   forexpos - x-Offset foreground overlay
+   *   foreypos - y-Offset foreground overlay
+   *   boverlay - Background overlay
+   *   barea    - x-Offset, y-Offset, x-resolution and y-resolution of
+   *              background overlay
+   *
+   * Returned Value:
+   *   On success - OK
+   *   On error   - -EINVAL or -ECANCELED
+   */
+
+  int (*blend)(FAR struct stm32_dma2d_overlay_s *doverlay,
+               uint32_t destxpos, uint32_t destypos,
+               FAR struct stm32_dma2d_overlay_s *foverlay,
+               uint32_t forexpos, uint32_t foreypos,
+               FAR struct stm32_dma2d_overlay_s *boverlay,
+               FAR const struct fb_area_s *barea);
+};
+
+/****************************************************************************
  * Public Functions
- ******************************************************************************/
+ ****************************************************************************/
 
-/******************************************************************************
- * Name: stm32_dma2dblit
+/****************************************************************************
+ * Name: stm32_dma2ddev
  *
  * Description:
- *   Copy selected area from a background layer to selected position of the
- *   foreground layer. Copies the result to the destination layer.
+ *   Get a reference to the DMA2D controller.
  *
- * Parameter:
- *   dest     - Valid reference to the destination layer
- *   fore     - Valid reference to the foreground layer
- *   forexpos - Valid selected x target position of the destination layer
- *   foreypos - Valid selected y target position of the destination layer
- *   back     - Valid reference to the background layer
- *   backarea - Valid reference to the selected area of the background layer
+ * Returned Value:
+ *   On success - A valid DMA2D controller reference
+ *   On error   - NULL and errno is set to
+ *                -EINVAL if one of the parameter is invalid
  *
- * Return:
- *    OK     - On success
- *   -EINVAL - On error
- *
- ******************************************************************************/
+ ****************************************************************************/
 
-int stm32l4_dma2dblit(FAR struct stm32_ltdc_s *dest, FAR struct stm32_ltdc_s *fore, fb_coord_t forexpos, fb_coord_t foreypos, FAR struct stm32_ltdc_s *back, FAR const struct ltdc_area_s *backarea);
+FAR struct dma2d_layer_s *stm32_dma2ddev(void);
 
-/******************************************************************************
- *
- * Name: stm32_dma2dblend
- *
- * Description:
- *   Blends the selected area from a background layer with selected position of
- *   the foreground layer. Blends the result with the destination layer.
- *   Note! This is the same as the blit operation but with blending depending on
- *   the blendmode settings of the layer.
- *
- * Parameter:
- *   dest     - Valid reference to the destination layer
- *   fore     - Valid reference to the foreground layer
- *   forexpos - Valid selected x target position of the destination layer
- *   foreypos - Valid selected y target position of the destination layer
- *   back     - Valid reference to the background layer
- *   backarea - Valid reference to the selected area of the background layer
- *
- * Return:
- *    OK     - On success
- *   -EINVAL - On error
- *
- ******************************************************************************/
-
-int stm32l4_dma2dblend(FAR struct stm32_ltdc_s *dest, FAR struct stm32_ltdc_s *fore, fb_coord_t forexpos, fb_coord_t foreypos, FAR struct stm32_ltdc_s *back, FAR const struct ltdc_area_s *backarea);
-
-/******************************************************************************
+/****************************************************************************
  * Name: up_dma2dinitialize
  *
  * Description:
- *   Initialize the dma2d controller
+ *   Initialize the DMA2D controller
  *
- * Return:
+ * Returned Value:
  *   OK - On success
  *   An error if initializing failed.
  *
- ******************************************************************************/
+ ****************************************************************************/
 
-int up_dma2dinitialize(void);
+int stm32l4_dma2dinitialize(void);
 
-/******************************************************************************
+/****************************************************************************
  * Name: up_dma2duninitialize
  *
  * Description:
- *   Uninitialize the dma2d controller
+ *   Uninitialize the DMA2D controller
  *
- ******************************************************************************/
+ ****************************************************************************/
 
-void up_dma2duninitialize(void);
+void stm32l4_dma2duninitialize(void);
 
-#endif							/* CONFIG_STM32_DMA2D */
-#endif							/* __ARCH_ARM_SRC_STM32L4_STM32L4_DMA2D_H */
+#endif /* CONFIG_FB_OVERLAY */
+#endif /* __ARCH_ARM_SRC_STM32L4_STM32L4_DMA2D_H */

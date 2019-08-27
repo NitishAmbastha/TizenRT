@@ -1209,6 +1209,8 @@ config STM32L4_DCMI
 config STM32L4_DMA2D
 	bool "DMA2D"
 	default n
+	select FB
+	select FB_OVERLAY
 	depends on STM32L4_HAVE_DMA2D
 
 config STM32L4_HASH
