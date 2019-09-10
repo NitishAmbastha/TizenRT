@@ -145,10 +145,6 @@ static const struct procfs_entry_s g_procfsentries[] = {
 	{"partitions", &part_procfsoperations},
 #endif
 
-#if defined(CONFIG_PM) && !defined(CONFIG_FS_PROCFS_EXCLUDE_POWER)
-	{"power/domains**", &power_procfsoperations},
-#endif
-
 #if !defined(CONFIG_FS_PROCFS_EXCLUDE_UPTIME)
 	{"uptime", &uptime_operations},
 #endif

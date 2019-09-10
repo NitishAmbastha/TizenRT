@@ -83,7 +83,7 @@
  *
  ****************************************************************************/
 
-int pm_register(int domain_indx, FAR struct pm_callback_s *callbacks)
+int pm_register(FAR struct pm_callback_s *callbacks)
 {
 	int ret;
 
@@ -91,12 +91,14 @@ int pm_register(int domain_indx, FAR struct pm_callback_s *callbacks)
 
 	/* Add the new entry to the end of the list of registered callbacks */
 
-	ret = pm_lock(domain_indx);
-	if (ret == OK) {
-		sq_addlast(&callbacks->entry, &g_pmglobals.domain[domain_indx].registry);
-	}
-	pm_unlock(domain_indx);
-	return ret;
+      ret = pm_lock();
+      if (ret == OK)
+        {
+          dq_addlast(&callbacks->entry, &g_pmglobals.registry);
+          pm_unlock();
+        }
+
+  return ret;
 }
 
 #endif							/* CONFIG_PM */

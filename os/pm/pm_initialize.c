@@ -98,17 +98,15 @@ struct pm_global_s g_pmglobals;
 
 void pm_initialize(void)
 {
-	int domain_indx = 0;
+	FAR struct pm_domain_s *pdom;
+	int i;
 
-	/* Initialize the registry and the PM global data structures.  The PM
-	 * global data structure resides in .bss which is zeroed at boot time.  So
-	 * it is only required to initialize non-zero elements of the PM global
-	 * data structure here.
-	 */
+	for (i = 0; i < CONFIG_PM_NDOMAINS; i++)
+	{
+		pdom = &g_pmglobals.domain[i];
+		pdom->stime = clock_systimer();
+		pdom->btime = clock_systimer();
 
-	for (domain_indx = 0; domain_indx < CONFIG_PM_NDOMAINS; domain_indx++) {
-		sq_init(&g_pmglobals.domain[domain_indx].registry);
-		sem_init(&g_pmglobals.domain[domain_indx].regsem, 0, 1);
 
 #ifdef CONFIG_PM_METRICS
 		struct timespec cur_time;
@@ -134,6 +132,5 @@ void pm_initialize(void)
 		sq_addlast((&initnode->entry), &g_pmglobals.domain[domain_indx].history);
 #endif
 	}
-	pmtest_init();
 }
 #endif							/* CONFIG_PM */
